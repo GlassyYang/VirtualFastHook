@@ -1,1 +1,49 @@
-ninja: no work to do.
+[1/3] Building C object CMakeFiles/fasthook.dir/src/main/cpp/enhanced_dlfcn.c.o
+[2/3] Building C object CMakeFiles/fasthook.dir/src/main/cpp/fast_hook_manager.c.o
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.c:165:57: warning: format specifies type 'int' but the argument has type 'long' [-Wformat]
+        LOGI("Mprotect:%d Pagesize:%d Alignment:%d",ret,page_size,alignment);
+                                   ~~                   ^~~~~~~~~
+                                   %ld
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.h:7:64: note: expanded from macro 'LOGI'
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+                                                               ^~~~~~~~~~~
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.c:422:118: warning: format specifies type 'short' but the argument has type 'uint32_t' (aka 'unsigned int') [-Wformat]
+    LOGI("TargetMethod:%p QuickToInterpreterBridge:%p hotness_count:%hd",art_method,art_quick_to_interpreter_bridge_,hotness_count);
+                                                                    ~~~                                              ^~~~~~~~~~~~~
+                                                                    %u
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.h:7:64: note: expanded from macro 'LOGI'
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+                                                               ^~~~~~~~~~~
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.c:588:36: warning: format specifies type 'void *' but the argument has type 'long' [-Wformat]
+        LOGI("Forward NewEntry:%p",ReadPointer((unsigned char *) art_forward_method + kArtMethodQuickCodeOffset));
+                               ~~  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                               %ld
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.h:7:64: note: expanded from macro 'LOGI'
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+                                                               ^~~~~~~~~~~
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.c:726:36: warning: format specifies type 'void *' but the argument has type 'long' [-Wformat]
+        LOGI("Forward NewEntry:%p",ReadPointer((unsigned char *) art_forward_method + kArtMethodQuickCodeOffset));
+                               ~~  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                               %ld
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.h:7:64: note: expanded from macro 'LOGI'
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+                                                               ^~~~~~~~~~~
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.c:741:65: warning: passing 'unsigned char *' to parameter of type 'char *' converts between pointers to integer types with different sign [-Wpointer-sign]
+    __builtin___clear_cache((void *)prev_quick_hook_trampoline, (unsigned char*)prev_quick_hook_trampoline + quick_hook_trampoline_len);
+                                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.c:825:31: warning: format specifies type 'void *' but the argument has type 'long' [-Wformat]
+    LOGI("Target NewEntry:%p",ReadPointer((unsigned char *) art_target_method + kArtMethodQuickCodeOffset));
+                          ~~  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                          %ld
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.h:7:64: note: expanded from macro 'LOGI'
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+                                                               ^~~~~~~~~~~
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.c:828:36: warning: format specifies type 'void *' but the argument has type 'long' [-Wformat]
+        LOGI("Forward NewEntry:%p",ReadPointer((unsigned char *) art_forward_method + kArtMethodQuickCodeOffset));
+                               ~~  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                               %ld
+/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.h:7:64: note: expanded from macro 'LOGI'
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+                                                               ^~~~~~~~~~~
+7 warnings generated.
+[3/3] Linking C shared library ../../../../build/intermediates/cmake/release/obj/armeabi-v7a/libfasthook.so

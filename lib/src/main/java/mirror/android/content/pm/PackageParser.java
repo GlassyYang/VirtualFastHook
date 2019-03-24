@@ -47,7 +47,7 @@ public class PackageParser {
     public static RefStaticMethod<ServiceInfo> generateServiceInfo;
     @MethodParams({File.class, String.class, DisplayMetrics.class, int.class})
     public static RefMethod<android.content.pm.PackageParser.Package> parsePackage;
-    
+
     public static class Package {
         public static Class<?> TYPE = RefClass.load(Package.class, "android.content.pm.PackageParser$Package");
         public static RefObject<List> activities;
@@ -63,6 +63,7 @@ public class PackageParser {
         public static RefObject<List> receivers;
         public static RefObject<List<String>> requestedPermissions;
         public static RefObject<List> services;
+        public static RefObject<Object> mSigningDetails;
     }
 
     public static class Activity {
@@ -81,8 +82,6 @@ public class PackageParser {
     }
 
 
-
-
     public static class Permission {
         public static Class<?> TYPE = RefClass.load(Permission.class, "android.content.pm.PackageParser$Permission");
         public static RefObject<PermissionInfo> info;
@@ -98,5 +97,14 @@ public class PackageParser {
         public static RefObject<String> className;
         public static RefObject<ComponentName> componentName;
         public static RefObject<List<IntentFilter>> intents;
+    }
+
+    public static class SigningDetails {
+        public static Class<?> TYPE = RefClass.load(SigningDetails.class, "android.content.pm.PackageParser$SigningDetails");
+        public static RefObject<Signature[]> signatures;
+        public static RefObject<Signature[]> pastSigningCertificates;
+
+        public static RefMethod<Boolean> hasPastSigningCertificates;
+        public static RefMethod<Boolean> hasSignatures;
     }
 }
