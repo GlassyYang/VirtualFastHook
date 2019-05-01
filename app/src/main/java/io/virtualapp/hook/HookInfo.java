@@ -1,9 +1,11 @@
 package io.virtualapp.hook;
 
+import android.telephony.TelephonyManager;
+
 public class HookInfo {
     public static String[][] HOOK_ITEMS = {{
             "1",
-            "android.telephony.TelephonyManager", "getDeviceId", "()Ljava/lang/String;",
+            TelephonyManager.class.getName(), "getDeviceId", "",
             "io.virtualapp.hook.HookDeviceId", "hook", "Ljava/lang/Object;",
             "io.virtualapp.hook.HookDeviceId", "forward", "Ljava/lang/Object;"
     }};

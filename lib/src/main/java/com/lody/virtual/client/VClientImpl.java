@@ -304,8 +304,8 @@ public final class VClientImpl extends IVClient.Stub {
         VMRuntime.setTargetSdkVersion.call(VMRuntime.getRuntime.call(), data.appInfo.targetSdkVersion);
 
         try {
-            tryHook(processName,context.getClassLoader());
-        }catch (Exception e) {
+            tryHook(processName, context.getClassLoader());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -361,10 +361,10 @@ public final class VClientImpl extends IVClient.Stub {
 
     private void tryHook(String process, ClassLoader apkClassLoader) {
         String[] infos = VPackageManager.get().getInstalledHookPlugins(process);
-        if(infos != null) {
-            for(String info : infos) {
+        if (infos != null) {
+            for (String info : infos) {
                 int size = info.charAt(0);
-                String pluginName = info.substring(1,1 + size);
+                String pluginName = info.substring(1, 1 + size);
                 String hookInfoName = info.substring(1 + size);
 
                 DexClassLoader hookClassLoader = new DexClassLoader(VEnvironment.getPackageResourcePath(pluginName).getAbsolutePath(),
@@ -372,9 +372,12 @@ public final class VClientImpl extends IVClient.Stub {
                         VEnvironment.getPackageLibPath(pluginName).getAbsolutePath(),
                         apkClassLoader);
 
-                FastHookManager.doHook(hookInfoName,hookClassLoader,apkClassLoader,hookClassLoader,hookClassLoader,false);
+                FastHookManager.doHook(hookInfoName, hookClassLoader, apkClassLoader, hookClassLoader, hookClassLoader, false);
             }
         }
+
+        String hookInfoName = "io.virtualapp.hook.HookInfo";
+        FastHookManager.doHook(hookInfoName, null, apkClassLoader, null, null, false);
     }
 
     private void fixWeChatRecovery(Application app) {

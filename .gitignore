@@ -7,3 +7,6 @@
 .DS_Store
 /build
 /captures
+app/.externalNativeBuild
+fasthook/.externalNativeBuild
+lib/.externalNativeBuild
