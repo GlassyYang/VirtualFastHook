@@ -56,144 +56,140 @@ public class FastHookManager {
 
     private final static String CONSTRUCTOR = "<init>";
 
-    private static HashMap<Member, HookRecord> mHookMap;
-    private static HashMap<Long, ArrayList<HookRecord>> mQuickTrampolineMap;
+    private static HashMap<Member,HookRecord> mHookMap;
+    private static HashMap<Long,ArrayList<HookRecord>> mQuickTrampolineMap;
     private static Handler mHandler;
     private static long mQuickToInterpreterBridge;
 
-    static {
+    static{
         System.loadLibrary(HOOK_LIB);
-        mHookMap = new HashMap<Member, HookRecord>();
-        mQuickTrampolineMap = new HashMap<Long, ArrayList<HookRecord>>();
+        mHookMap = new HashMap<Member,HookRecord>();
+        mQuickTrampolineMap = new HashMap<Long,ArrayList<HookRecord>>();
         mHandler = new HookHandler();
         init(Build.VERSION.SDK_INT);
         Logd("Init");
     }
 
-    public static void doHook(String hookInfoClassName, ClassLoader hookInfoClassLoader,
-                              ClassLoader targetClassLoader, ClassLoader hookClassLoader,
-                              ClassLoader forwardClassLoader, boolean jitInline) {
+    public static void doHook(String hookInfoClassName, ClassLoader hookInfoClassLoader, ClassLoader targetClassLoader, ClassLoader hookClassLoader, ClassLoader forwardClassLoader, boolean jitInline) {
         try {
             String[][] hookItems = null;
-            if (hookInfoClassLoader != null) {
-                // 抛出了一个异常
-                hookItems = (String[][]) Class.forName(hookInfoClassName, true, hookClassLoader).getField(HOOK_ITEMS).get(null);
-            } else {
-                hookItems = (String[][]) Class.forName(hookInfoClassName).getField(HOOK_ITEMS).get(null);
+            if(hookInfoClassLoader != null) {
+                hookItems = (String[][])Class.forName(hookInfoClassName,true,hookClassLoader).getField(HOOK_ITEMS).get(null);
+            }else {
+                hookItems = (String[][])Class.forName(hookInfoClassName).getField(HOOK_ITEMS).get(null);
             }
 
-            if (hookItems == null) {
+            if(hookItems == null) {
                 Loge("hook items is null");
                 return;
             }
 
-            for (int i = 0; i < hookItems.length; i++) {
+            for(int i = 0; i < hookItems.length; i++) {
                 String[] hookItem = hookItems[i];
-                if (hookItem.length != HOOK_ITEM_SIZE) {
-                    Loge("invalid hook item size:" + hookItem.length + " item:" + Arrays.toString(hookItem));
+                if(hookItem.length != HOOK_ITEM_SIZE) {
+                    Loge("invalid hook item size:"+hookItem.length+" item:"+ Arrays.toString(hookItem));
                     continue;
                 }
 
-                if (hookItem[0].length() != HOOK_MODE_SIZE) {
-                    Loge("invalid hook mode size:" + hookItem[0].length() + " item:" + Arrays.toString(hookItem));
+                if(hookItem[0].length() != HOOK_MODE_SIZE) {
+                    Loge("invalid hook mode size:"+hookItem[0].length()+" item:"+Arrays.toString(hookItem));
                     continue;
                 }
 
                 int mode = hookItem[0].charAt(0) - 48;
-                if (mode > MODE_REPLACE || mode < MODE_REWRITE) {
+                if(mode > MODE_REPLACE || mode < MODE_REWRITE) {
                     mode = MODE_REWRITE;
                 }
 
-                Member targetMethod = getMethod(hookItem[1], hookItem[2], hookItem[3], targetClassLoader, null, null);
-                Member hookMethod = getMethod(hookItem[4], hookItem[5], hookItem[6], null, hookClassLoader, null);
-                Member forwardMethod = getMethod(hookItem[7], hookItem[8], hookItem[9], null, null, hookClassLoader);
+                Member targetMethod = getMethod(hookItem[1],hookItem[2],hookItem[3],targetClassLoader,null,null);
+                Member hookMethod = getMethod(hookItem[4],hookItem[5],hookItem[6],null,hookClassLoader,null);
+                Member forwardMethod = getMethod(hookItem[7],hookItem[8],hookItem[9],null,null,hookClassLoader);
 
-                if (targetMethod == null || hookMethod == null) {
-                    Loge("invalid target method or hook method item:" + Arrays.toString(hookItem));
+                if(targetMethod == null || hookMethod == null) {
+                    Loge("invalid target method or hook method item:"+Arrays.toString(hookItem));
                     continue;
                 }
 
-                if (forwardMethod != null && !isNativeMethod(forwardMethod)) {
-                    Loge("forward method must be native method item:" + Arrays.toString(hookItem));
+                if(forwardMethod != null && !isNativeMethod(forwardMethod)) {
+                    Loge("forward method must be native method item:"+Arrays.toString(hookItem));
                     continue;
                 }
 
-                Logd("doHook Mode:" + mode + " TargetMethod[" + hookItem[1] + "," + hookItem[2] + "," + hookItem[3] + "] HookMethod[" + hookItem[4] + "," + hookItem[5] + "," + hookItem[6] + "] ForwardMethod[" + hookItem[7] + "," + hookItem[8] + "," + hookItem[9] + "]");
-                doHook(targetMethod, hookMethod, forwardMethod, mode, 0);
+                Logd("doHook Mode:"+mode+" TargetMethod["+hookItem[1]+","+hookItem[2]+","+hookItem[3]+"] HookMethod["+hookItem[4]+","+hookItem[5]+","+hookItem[6]+"] ForwardMethod["+hookItem[7]+","+hookItem[8]+","+hookItem[9]+"]");
+                doHook(targetMethod,hookMethod,forwardMethod,mode,0);
             }
 
-            if (!jitInline) {
+            if(!jitInline && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 disableJITInline();
             }
-        } catch (Exception e) {
-            Loge("FUCK??????");
+        }catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private static void doHook(Member targetMethod, Member hookMethod, Member forwardMethod, int mode, int retryCount) {
-        Logd("doHook target:" + targetMethod.getName() + " hook:" + hookMethod.getName() + " forward:" + ((forwardMethod != null) ? forwardMethod.getName() : "null") + " model:" + mode + " retry:" + retryCount);
+        Logd("doHook target:"+targetMethod.getName()+" hook:"+hookMethod.getName()+" forward:"+((forwardMethod != null)?forwardMethod.getName():"null")+" model:"+mode+" retry:"+retryCount);
 
         HookRecord hookRecord = mHookMap.get(targetMethod);
-        if (hookRecord != null) {
-            Loge("already hook target:" + targetMethod.getName() + " hook:" + hookMethod.getName() + " forward:" + ((forwardMethod != null) ? forwardMethod.getName() : "null") + " model:" + mode + " retry:" + retryCount);
+        if(hookRecord != null) {
+            Loge("already hook target:"+targetMethod.getName()+" hook:"+hookMethod.getName()+" forward:"+((forwardMethod != null)?forwardMethod.getName():"null")+" model:"+mode+" retry:"+retryCount);
             return;
         }
 
         boolean isNative = false;
-        if (isNativeMethod(targetMethod)) {
+        if(isNativeMethod(targetMethod)) {
             mode = MODE_REPLACE;
             isNative = true;
             Logd("do replace hook for native method");
         }
 
-        switch (mode) {
+        switch(mode) {
             case MODE_REWRITE:
                 long entryPoint = getMethodEntryPoint(targetMethod);
-                Logd("EntryPoint:0x" + Long.toHexString(entryPoint));
+                Logd("EntryPoint:0x"+Long.toHexString(entryPoint));
 
                 ArrayList<HookRecord> quickTrampolineList = mQuickTrampolineMap.get(Long.valueOf(entryPoint));
-                if (quickTrampolineList != null) {
+                if(quickTrampolineList != null) {
                     int i = 0;
-                    for (HookRecord record : quickTrampolineList) {
-                        Logd("record[" + i + "]:" + record);
+                    for(HookRecord record:quickTrampolineList) {
+                        Logd("record["+i+"]:"+record);
                     }
 
                     HookRecord tailRecord = quickTrampolineList.get(quickTrampolineList.size() - 1);
                     HookRecord prevRecord = quickTrampolineList.get(quickTrampolineList.size() - 2);
-                    long quickOriginalTrampoline = tailRecord.mQuickOriginalTrampoline;
+                    long quickOriginalTrampoline =  tailRecord.mQuickOriginalTrampoline;
                     long prevQuickHookTrampoline = prevRecord.mQuickHookTrampoline;
                     HookRecord targetRecord = new HookRecord(TYPE_RECORD_REWRITE, targetMethod, hookMethod, forwardMethod, 0, 0, 1, quickTrampolineList);
 
-                    doPartRewriteHook(targetMethod, hookMethod, forwardMethod, quickOriginalTrampoline, prevQuickHookTrampoline, targetRecord);
-                    Logd("QuickHookTrampoline:0x" + Long.toHexString(targetRecord.mQuickHookTrampoline) + " QuickTargetTrampoline:0x" + Long.toHexString(targetRecord.mQuickTargetTrampoline));
+                    doPartRewriteHook(targetMethod,hookMethod,forwardMethod,quickOriginalTrampoline,prevQuickHookTrampoline,targetRecord);
+                    Logd("QuickHookTrampoline:0x"+Long.toHexString(targetRecord.mQuickHookTrampoline)+" QuickTargetTrampoline:0x"+Long.toHexString(targetRecord.mQuickTargetTrampoline));
 
-                    quickTrampolineList.add(quickTrampolineList.size() - 1, targetRecord);
+                    quickTrampolineList.add(quickTrampolineList.size() - 1,targetRecord);
                     targetRecord.index = quickTrampolineList.size() - 2;
                     tailRecord.index = quickTrampolineList.size() - 1;
-                    mHookMap.put(targetMethod, targetRecord);
-                } else {
-                    if (Build.VERSION.SDK_INT < ANDROID_N) {
+                    mHookMap.put(targetMethod,targetRecord);
+                }else {
+                    if(Build.VERSION.SDK_INT < ANDROID_N) {
                         boolean success = isCompiled(targetMethod);
-                        if (success) {
+                        if(success) {
                             success = doRewriteHookCheck(targetMethod);
                         }
 
-                        if (success) {
-                            doFullRewriteHookInternal(targetMethod, hookMethod, forwardMethod);
-                        } else {
-                            doReplaceHookInternal(targetMethod, hookMethod, forwardMethod, isNative);
+                        if(success) {
+                            doFullRewriteHookInternal(targetMethod,hookMethod,forwardMethod);
+                        }else {
+                            doReplaceHookInternal(targetMethod,hookMethod,forwardMethod,isNative);
                         }
-                    } else {
+                    }else {
                         int jitState = checkJitState(targetMethod);
-                        Logd("jitState:" + jitState);
+                        Logd("jitState:"+jitState);
 
                         switch (jitState) {
                             case JIT_COMPILING:
                             case JIT_COMPILINGORFAILED:
                                 if (retryCount < RETRY_LIMIT) {
                                     int newCount = retryCount + 1;
-                                    sendRetryMessage(targetMethod, hookMethod, forwardMethod, mode, newCount);
+                                    sendRetryMessage(targetMethod,hookMethod,forwardMethod,mode,newCount);
                                     break;
                                 }
                             case JIT_NONE:
@@ -201,26 +197,26 @@ public class FastHookManager {
                                 boolean success = true;
                                 boolean needCompile = !isCompiled(targetMethod);
 
-                                if (jitState == JIT_NONE && needCompile) {
+                                if(jitState == JIT_NONE && needCompile) {
                                     success = compileMethod(targetMethod);
 
-                                    if (success) {
+                                    if(success) {
                                         success = doRewriteHookCheck(targetMethod);
                                     }
-                                } else if (jitState == JIT_COMPILE) {
+                                }else if(jitState == JIT_COMPILE) {
                                     success = doRewriteHookCheck(targetMethod);
-                                } else if (jitState == JIT_COMPILINGORFAILED) {
+                                }else if(jitState == JIT_COMPILINGORFAILED) {
                                     success = false;
                                 }
 
-                                if (success) {
-                                    doFullRewriteHookInternal(targetMethod, hookMethod, forwardMethod);
-                                } else {
-                                    if (Build.VERSION.SDK_INT >= ANDROID_O && BuildConfig.DEBUG) {
+                                if(success) {
+                                    doFullRewriteHookInternal(targetMethod,hookMethod,forwardMethod);
+                                }else {
+                                    if(Build.VERSION.SDK_INT >= ANDROID_O && BuildConfig.DEBUG) {
                                         setNativeMethod(targetMethod);
                                         Logd("set target method to native on debug mode");
                                     }
-                                    doReplaceHookInternal(targetMethod, hookMethod, forwardMethod, isNative);
+                                    doReplaceHookInternal(targetMethod,hookMethod,forwardMethod,isNative);
                                 }
                                 break;
                         }
@@ -228,27 +224,27 @@ public class FastHookManager {
                 }
                 break;
             case MODE_REPLACE:
-                if (Build.VERSION.SDK_INT < ANDROID_N) {
-                    doReplaceHookInternal(targetMethod, hookMethod, forwardMethod, isNative);
-                } else {
+                if(Build.VERSION.SDK_INT < ANDROID_N) {
+                    doReplaceHookInternal(targetMethod,hookMethod,forwardMethod,isNative);
+                }else {
                     int jitState = checkJitState(targetMethod);
-                    Logd("jitState:" + jitState);
+                    Logd("jitState:"+jitState);
 
                     switch (jitState) {
                         case JIT_COMPILING:
                         case JIT_COMPILINGORFAILED:
                             if (retryCount < RETRY_LIMIT) {
                                 int newCount = retryCount + 1;
-                                sendRetryMessage(targetMethod, hookMethod, forwardMethod, mode, newCount);
+                                sendRetryMessage(targetMethod,hookMethod,forwardMethod,mode,newCount);
                                 break;
                             }
                         case JIT_NONE:
                         case JIT_COMPILE:
-                            if (Build.VERSION.SDK_INT >= ANDROID_O && BuildConfig.DEBUG) {
+                            if(Build.VERSION.SDK_INT >= ANDROID_O && BuildConfig.DEBUG) {
                                 setNativeMethod(targetMethod);
                                 Logd("set target method to native on debug mode");
                             }
-                            doReplaceHookInternal(targetMethod, hookMethod, forwardMethod, isNative);
+                            doReplaceHookInternal(targetMethod,hookMethod,forwardMethod,isNative);
                             break;
                     }
                 }
@@ -266,23 +262,23 @@ public class FastHookManager {
         HookRecord tailRecord = new HookRecord(TYPE_RECORD_REWRITE_TAIL, 0, 2, newQuickTrampolineList);
 
         doFullRewriteHook(targetMethod, hookMethod, forwardMethod, headRecord, targetRecord, tailRecord);
-        Logd("JumpTrampoline:0x" + Long.toHexString(headRecord.mJumpTrampoline) + " QuickHookTrampoline:0x" + Long.toHexString(targetRecord.mQuickHookTrampoline) + " QuickTargetTrampoline:0x" + Long.toHexString(targetRecord.mQuickTargetTrampoline) + " QuickOriginalTrampoline:0x" + Long.toHexString(tailRecord.mQuickOriginalTrampoline));
+        Logd("JumpTrampoline:0x"+Long.toHexString(headRecord.mJumpTrampoline)+" QuickHookTrampoline:0x"+Long.toHexString(targetRecord.mQuickHookTrampoline)+" QuickTargetTrampoline:0x"+Long.toHexString(targetRecord.mQuickTargetTrampoline)+" QuickOriginalTrampoline:0x"+Long.toHexString(tailRecord.mQuickOriginalTrampoline));
 
         newQuickTrampolineList.add(headRecord);
         newQuickTrampolineList.add(targetRecord);
         newQuickTrampolineList.add(tailRecord);
 
-        mQuickTrampolineMap.put(Long.valueOf(getMethodEntryPoint(targetMethod)), newQuickTrampolineList);
-        mHookMap.put(targetMethod, targetRecord);
+        mQuickTrampolineMap.put(Long.valueOf(getMethodEntryPoint(targetMethod)),newQuickTrampolineList);
+        mHookMap.put(targetMethod,targetRecord);
     }
 
     private static void doReplaceHookInternal(Member targetMethod, Member hookMethod, Member forwardMethod, boolean isNative) {
-        HookRecord targetRecord = new HookRecord(TYPE_RECORD_REPLACE, targetMethod, hookMethod, forwardMethod, 0, 0);
+        HookRecord targetRecord = new HookRecord(TYPE_RECORD_REPLACE,targetMethod,hookMethod,forwardMethod,0,0);
 
-        doReplaceHook(targetMethod, hookMethod, forwardMethod, isNative, targetRecord);
-        Logd("QuickHookTrampoline:0x" + Long.toHexString(targetRecord.mHookTrampoline) + " QuickTargetTrampoline:0x" + Long.toHexString(targetRecord.mTargetTrampoline));
+        doReplaceHook(targetMethod,hookMethod,forwardMethod,isNative,targetRecord);
+        Logd("QuickHookTrampoline:0x"+Long.toHexString(targetRecord.mHookTrampoline)+" QuickTargetTrampoline:0x"+Long.toHexString(targetRecord.mTargetTrampoline));
 
-        mHookMap.put(targetMethod, targetRecord);
+        mHookMap.put(targetMethod,targetRecord);
     }
 
     private static void sendRetryMessage(Member targetMethod, Member hookMethod, Member forwardMethod, int mode, int retryCount) {
@@ -294,13 +290,13 @@ public class FastHookManager {
     }
 
     public static Member getMethod(String className, String methodName, String paramSig, ClassLoader targetClassLoader, ClassLoader hookClassLoader, ClassLoader forwardClassLoader) {
-        if (className.isEmpty() || methodName.isEmpty()) {
+        if(className.isEmpty() || methodName.isEmpty()) {
             return null;
         }
 
         int index = 0;
         ArrayList<Class> paramsArray = new ArrayList<Class>();
-        while (index < paramSig.length()) {
+        while(index < paramSig.length()) {
             switch (paramSig.charAt(index)) {
                 case 'B': // byte
                     paramsArray.add(byte.class);
@@ -328,39 +324,39 @@ public class FastHookManager {
                     break;
                 case 'L':
                     try {
-                        String objectClass = getObjectClass(index, paramSig);
+                        String objectClass = getObjectClass(index,paramSig);
 
-                        if (hookClassLoader != null) {
-                            paramsArray.add(Class.forName(objectClass, true, hookClassLoader));
-                        } else if (forwardClassLoader != null) {
-                            paramsArray.add(Class.forName(objectClass, true, forwardClassLoader));
-                        } else if (targetClassLoader != null) {
-                            paramsArray.add(Class.forName(objectClass, true, targetClassLoader));
-                        } else {
+                        if(hookClassLoader != null) {
+                            paramsArray.add(Class.forName(objectClass,true,hookClassLoader));
+                        }else if(forwardClassLoader != null) {
+                            paramsArray.add(Class.forName(objectClass,true,forwardClassLoader));
+                        }else if(targetClassLoader != null) {
+                            paramsArray.add(Class.forName(objectClass,true,targetClassLoader));
+                        }else {
                             paramsArray.add(Class.forName(objectClass));
                         }
 
                         index += objectClass.length() + 1;
-                    } catch (Exception e) {
+                    }catch (Exception e) {
                         e.printStackTrace();
                     }
                     break;
                 case '[':
                     try {
-                        String arrayClass = getArrayClass(index, paramSig);
+                        String arrayClass = getArrayClass(index,paramSig);
 
-                        if (hookClassLoader != null) {
-                            paramsArray.add(Class.forName(arrayClass, true, hookClassLoader));
-                        } else if (forwardClassLoader != null) {
-                            paramsArray.add(Class.forName(arrayClass, true, forwardClassLoader));
-                        } else if (targetClassLoader != null) {
-                            paramsArray.add(Class.forName(arrayClass, true, targetClassLoader));
-                        } else {
+                        if(hookClassLoader != null) {
+                            paramsArray.add(Class.forName(arrayClass,true,hookClassLoader));
+                        }else if(forwardClassLoader != null) {
+                            paramsArray.add(Class.forName(arrayClass,true,forwardClassLoader));
+                        }else if(targetClassLoader != null) {
+                            paramsArray.add(Class.forName(arrayClass,true,targetClassLoader));
+                        }else {
                             paramsArray.add(Class.forName(arrayClass));
                         }
 
                         index += arrayClass.length() - 1;
-                    } catch (Exception e) {
+                    }catch (Exception e) {
                         e.printStackTrace();
                     }
                     break;
@@ -369,38 +365,38 @@ public class FastHookManager {
         }
 
         Class[] params = new Class[paramsArray.size()];
-        for (int i = 0; i < paramsArray.size(); i++) {
+        for(int i = 0; i < paramsArray.size(); i++) {
             params[i] = paramsArray.get(i);
         }
 
         Member method = null;
         try {
-            if (hookClassLoader != null) {
-                if (CONSTRUCTOR.equals(methodName)) {
-                    method = Class.forName(className, true, hookClassLoader).getDeclaredConstructor(params);
-                } else {
-                    method = Class.forName(className, true, hookClassLoader).getDeclaredMethod(methodName, params);
+            if(hookClassLoader != null) {
+                if(CONSTRUCTOR.equals(methodName)) {
+                    method = Class.forName(className,true,hookClassLoader).getDeclaredConstructor(params);
+                }else {
+                    method = Class.forName(className,true,hookClassLoader).getDeclaredMethod(methodName,params);
                 }
-            } else if (forwardClassLoader != null) {
-                if (CONSTRUCTOR.equals(methodName)) {
-                    method = Class.forName(className, true, forwardClassLoader).getDeclaredConstructor(params);
-                } else {
-                    method = Class.forName(className, true, forwardClassLoader).getDeclaredMethod(methodName, params);
+            }else if(forwardClassLoader != null) {
+                if(CONSTRUCTOR.equals(methodName)) {
+                    method = Class.forName(className,true,forwardClassLoader).getDeclaredConstructor(params);
+                }else {
+                    method = Class.forName(className,true,forwardClassLoader).getDeclaredMethod(methodName,params);
                 }
-            } else if (targetClassLoader != null) {
-                if (CONSTRUCTOR.equals(methodName)) {
-                    method = Class.forName(className, true, targetClassLoader).getDeclaredConstructor(params);
-                } else {
-                    method = Class.forName(className, true, targetClassLoader).getDeclaredMethod(methodName, params);
+            }else if(targetClassLoader != null) {
+                if(CONSTRUCTOR.equals(methodName)) {
+                    method = Class.forName(className,true,targetClassLoader).getDeclaredConstructor(params);
+                }else {
+                    method = Class.forName(className,true,targetClassLoader).getDeclaredMethod(methodName,params);
                 }
-            } else {
-                if (CONSTRUCTOR.equals(methodName)) {
+            }else {
+                if(CONSTRUCTOR.equals(methodName)) {
                     method = Class.forName(className).getDeclaredConstructor(params);
-                } else {
-                    method = Class.forName(className).getDeclaredMethod(methodName, params);
+                }else {
+                    method = Class.forName(className).getDeclaredMethod(methodName,params);
                 }
             }
-        } catch (Exception e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -411,7 +407,7 @@ public class FastHookManager {
         String objectClass = null;
 
         String subParam = paramSig.substring(index + 1);
-        objectClass = subParam.split(";")[0].replace('/', '.');
+        objectClass = subParam.split(";")[0].replace('/','.');
 
         return objectClass;
     }
@@ -420,17 +416,17 @@ public class FastHookManager {
         int count = 0;
         StringBuilder arrayClassBuilder = new StringBuilder("");
 
-        while (paramSig.charAt(index) == '[') {
+        while(paramSig.charAt(index) == '[') {
             count++;
             index++;
             arrayClassBuilder.append('[');
         }
 
-        if (paramSig.charAt(index) == 'L') {
+        if(paramSig.charAt(index) == 'L') {
             String subParam = paramSig.substring(index);
-            arrayClassBuilder.append(subParam.split(";")[0].replace('/', '.'));
+            arrayClassBuilder.append(subParam.split(";")[0].replace('/','.'));
             arrayClassBuilder.append(";");
-        } else {
+        }else {
             arrayClassBuilder.append(paramSig.charAt(index));
         }
 
@@ -464,9 +460,9 @@ public class FastHookManager {
 
         public HookRecord(int type, long quickTrampoline, int index, ArrayList<HookRecord> quickTrampolineList) {
             this.mType = type;
-            if (type == TYPE_RECORD_REWRITE_HEAD) {
+            if(type == TYPE_RECORD_REWRITE_HEAD) {
                 this.mQuickOriginalTrampoline = quickTrampoline;
-            } else if (type == TYPE_RECORD_REWRITE_TAIL) {
+            }else if(type == TYPE_RECORD_REWRITE_TAIL) {
                 this.mJumpTrampoline = quickTrampoline;
             }
             this.index = index;
@@ -484,15 +480,15 @@ public class FastHookManager {
 
         public String toString() {
             StringBuilder sb = new StringBuilder("");
-            switch (mType) {
+            switch(mType) {
                 case TYPE_RECORD_REWRITE_HEAD:
-                    sb.append("HEAD Jump:" + Long.toHexString(mJumpTrampoline) + " index:" + index);
+                    sb.append("HEAD Jump:"+Long.toHexString(mJumpTrampoline)+" index:"+index);
                     break;
                 case TYPE_RECORD_REWRITE:
-                    sb.append("RECORD target:" + mTargetMethod.getName() + " hook:" + mHookMethod.getName() + " forward:" + mForwardMethod.getName() + " hook trampoline:0x" + Long.toHexString(mQuickHookTrampoline) + " target trampoline:0x" + Long.toHexString(mQuickTargetTrampoline) + " index:" + index);
+                    sb.append("RECORD target:"+mTargetMethod.getName()+" hook:"+mHookMethod.getName()+" forward:"+mForwardMethod.getName()+" hook trampoline:0x"+Long.toHexString(mQuickHookTrampoline)+" target trampoline:0x"+Long.toHexString(mQuickTargetTrampoline)+" index:"+index);
                     break;
                 case TYPE_RECORD_REWRITE_TAIL:
-                    sb.append("TAIL original:" + Long.toHexString(mQuickOriginalTrampoline) + " index:" + index);
+                    sb.append("TAIL original:"+Long.toHexString(mQuickOriginalTrampoline)+" index:"+index);
                     break;
             }
             return sb.toString();
@@ -505,8 +501,8 @@ public class FastHookManager {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MESSAGE_RETRY:
-                    HookMessage hookMessage = (HookMessage) msg.obj;
-                    doHook(hookMessage.mTargetMethod, hookMessage.mHookMethod, hookMessage.mForwardMethod, hookMessage.mMode, hookMessage.mRetryCount);
+                    HookMessage hookMessage = (HookMessage)msg.obj;
+                    doHook(hookMessage.mTargetMethod,hookMessage.mHookMethod,hookMessage.mForwardMethod,hookMessage.mMode,hookMessage.mRetryCount);
                     break;
             }
         }
@@ -529,40 +525,27 @@ public class FastHookManager {
     }
 
     private static void Logd(String message) {
-        if (DEBUG) {
-            Log.d(TAG, message);
+        if(DEBUG) {
+            Log.d(TAG,message);
         }
     }
 
     private static void Loge(String message) {
-        Log.d(TAG, message);
+        Log.d(TAG,message);
     }
 
     public native static void disableHiddenApiCheck();
-
     private native static void init(int version);
-
     private native static void disableJITInline();
-
     private native static long getMethodEntryPoint(Member method);
-
     private native static boolean compileMethod(Member method);
-
     private native static long getQuickToInterpreterBridge(Class targetClass, String methodName, String methodSig);
-
     private native static boolean isCompiled(Member method);
-
     private native static boolean doRewriteHookCheck(Member method);
-
     private native static boolean isNativeMethod(Member method);
-
     private native static void setNativeMethod(Member method);
-
     private native static int checkJitState(Member method);
-
     private native static int doFullRewriteHook(Member targetMethod, Member hookMethod, Member forwardMethod, HookRecord headRecord, HookRecord targetRecord, HookRecord tailRecord);
-
     private native static int doPartRewriteHook(Member targetMethod, Member hookMethod, Member forwardMethod, long quickOriginalTrampoline, long prevQuickHookTrampoline, HookRecord targetRecord);
-
     private native static int doReplaceHook(Member targetMethod, Member hookMethod, Member forwardMethod, boolean isNative, HookRecord targetRecord);
 }
