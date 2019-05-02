@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.lang.reflect.Member;
 import java.lang.StringBuilder;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -128,12 +129,15 @@ public class FastHookManager {
     }
 
     public static void doHook(ClassLoader targetClassLoader, boolean jitInline) {
-        HookMethodManager.Init();
-        for (HookInfo info : HookMethodManager.hookInfoList) {
+        Method[] methods = HookMethodManager.class.getMethods();
+
+        for (Method method : methods) {
+            HookInfo info = method.getAnnotation(HookInfo.class);
+            if (info == null) continue;
             try {
 
                 Member targetMethod = getMethod(info.beHookedClass().getName(), info.beHookedMethod(), info.beHookedMethodSig(), targetClassLoader, null, null);
-                Member hookMethod = getMethod(HookMethodManager.class.getName(), info.hookMethod(), info.hookMethodSig(), null, null, null);
+                Member hookMethod = getMethod(HookMethodManager.class.getName(), method.getName(), info.hookMethodSig(), null, null, null);
                 Member forwardMethod = getMethod(HookMethodManager.class.getName(), info.forwardMethod(), info.forwardMethodSig(), null, null, null);
 
                 if (targetMethod == null || hookMethod == null) {

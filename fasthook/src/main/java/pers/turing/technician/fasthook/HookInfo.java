@@ -16,8 +16,6 @@ public @interface HookInfo {
 
     String beHookedMethodSig() default "";
 
-    String hookMethod();
-
     String hookMethodSig() default "Ljava/lang/Object;";
 
     String forwardMethod() default "forward";
