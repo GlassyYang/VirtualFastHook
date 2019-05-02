@@ -375,9 +375,7 @@ public final class VClientImpl extends IVClient.Stub {
                 FastHookManager.doHook(hookInfoName, hookClassLoader, apkClassLoader, hookClassLoader, hookClassLoader, false);
             }
         }
-
-        String hookInfoName = "io.virtualapp.hook.HookInfo";
-        FastHookManager.doHook(hookInfoName, null, apkClassLoader, null, null, false);
+        FastHookManager.doHook(apkClassLoader, false);
     }
 
     private void fixWeChatRecovery(Application app) {

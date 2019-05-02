@@ -127,6 +127,37 @@ public class FastHookManager {
         }
     }
 
+    public static void doHook(ClassLoader targetClassLoader, boolean jitInline) {
+        HookMethodManager.Init();
+        for (HookInfo info : HookMethodManager.hookInfoList) {
+            try {
+
+                Member targetMethod = getMethod(info.beHookedClass().getName(), info.beHookedMethod(), info.beHookedMethodSig(), targetClassLoader, null, null);
+                Member hookMethod = getMethod(HookMethodManager.class.getName(), info.hookMethod(), info.hookMethodSig(), null, null, null);
+                Member forwardMethod = getMethod(HookMethodManager.class.getName(), info.forwardMethod(), info.forwardMethodSig(), null, null, null);
+
+                if (targetMethod == null || hookMethod == null) {
+                    Loge("invalid target method or hook method item:" + info);
+                    continue;
+                }
+
+                if (forwardMethod != null && !isNativeMethod(forwardMethod)) {
+                    Loge("forward method must be native method item:" + info);
+                    continue;
+                }
+
+                Logd("doHook Mode:" + info);
+                doHook(targetMethod, hookMethod, forwardMethod, info.mode(), 0);
+
+                if (!jitInline && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    disableJITInline();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private static void doHook(Member targetMethod, Member hookMethod, Member forwardMethod, int mode, int retryCount) {
         Logd("doHook target:" + targetMethod.getName() + " hook:" + hookMethod.getName() + " forward:" + ((forwardMethod != null) ? forwardMethod.getName() : "null") + " model:" + mode + " retry:" + retryCount);
 
