@@ -7,12 +7,12 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
 @Target({ElementType.PARAMETER, ElementType.METHOD})
-public @interface HookInfo {
+public @interface HookPrivacyInfo {
     int mode() default MODE_REWRITE;
 
     String beHookedClass();
 
     String beHookedMethod();
 
-    String forwardMethod() default "forward";
+    String forwardMethod() default "";
 }
