@@ -8,6 +8,11 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.PARAMETER, ElementType.METHOD})
 public @interface HookPrivacyInfo {
+    static int MODE_HOOK = 1;
+    static int MODE_CALLBACK = 2;
+
+    int hook() default MODE_HOOK;
+
     int mode() default MODE_REWRITE;
 
     String beHookedClass();

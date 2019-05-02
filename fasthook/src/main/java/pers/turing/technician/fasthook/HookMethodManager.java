@@ -1,8 +1,7 @@
 package pers.turing.technician.fasthook;
 
 import android.app.ActivityManager;
-import android.content.ContentResolver;
-import android.content.Context;
+import android.app.PendingIntent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,34 +30,25 @@ public class HookMethodManager {
 
     @HookPrivacyInfo(beHookedClass = "android.content.ContentResolver", beHookedMethod = "query")
     public static Cursor hookGetContentResolver(Object thiz, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        String scheme = uri.getScheme();
-        String host = uri.getHost();
-        Context context;
-        if (scheme != null && host != null && scheme.equalsIgnoreCase("content") && host.equalsIgnoreCase("sms")) {
-            uri = Uri.parse("x" + uri.toString());
-        }
-        return ((ContentResolver) thiz).query(uri, projection, selection, selectionArgs, sortOrder);
+        return null;
     }
 
     @HookPrivacyInfo(beHookedClass = "android.content.ContentResolver", beHookedMethod = "query")
     public static Cursor hookGetContentResolver(Object thiz, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, CancellationSignal cancellationSignal) {
-        String scheme = uri.getScheme();
-        String host = uri.getHost();
-        if (scheme != null && host != null && scheme.equalsIgnoreCase("content") && host.equalsIgnoreCase("sms")) {
-            uri = Uri.parse("x" + uri.toString());
-        }
-        return ((ContentResolver) thiz).query(uri, projection, selection, selectionArgs, sortOrder, cancellationSignal);
+        return null;
     }
 
     @HookPrivacyInfo(beHookedClass = "android.content.ContentResolver", beHookedMethod = "query")
     public static Cursor hookGetContentResolver(Object thiz, Uri uri, String[] projection, Bundle queryArgs, CancellationSignal cancellationSignal) {
-        String scheme = uri.getScheme();
-        String host = uri.getHost();
-        if (scheme != null && host != null && scheme.equalsIgnoreCase("content") && host.equalsIgnoreCase("sms")) {
-            uri = Uri.parse("x" + uri.toString());
-        }
-        return ((ContentResolver) thiz).query(uri, projection, queryArgs, cancellationSignal);
+        return null;
     }
+
+    @HookPrivacyInfo(beHookedClass = "android.telephony.SmsManager", beHookedMethod = "sendTextMessage", forwardMethod = "forwardSmsManager")
+    public static void hookSmsManager(Object thiz, String destinationAddress, String scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent) {
+        forwardSmsManager(thiz, destinationAddress, scAddress, text, sentIntent, deliveryIntent);
+    }
+
+    public static native void forwardSmsManager(Object thiz, String destinationAddress, String scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent);
 }
 
 

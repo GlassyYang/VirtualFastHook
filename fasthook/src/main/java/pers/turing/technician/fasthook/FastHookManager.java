@@ -15,6 +15,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import static pers.turing.technician.fasthook.HookPrivacyInfo.MODE_CALLBACK;
+import static pers.turing.technician.fasthook.HookPrivacyInfo.MODE_HOOK;
+
 public class FastHookManager {
     private static final String TAG = "FastHookManager";
     private static final boolean DEBUG = BuildConfig.DEBUG;
@@ -83,29 +86,31 @@ public class FastHookManager {
                 Class[] params = method.getParameterTypes();
                 Class[] targetParams = Arrays.copyOfRange(method.getParameterTypes(), 1, params.length);
 
+                Member hookMethod = null;
                 Member forwardMethod = null;
                 Member targetMethod = Class.forName(info.beHookedClass(), true, targetClassLoader).getDeclaredMethod(info.beHookedMethod(), targetParams);
 
-                try {
-                    if (!info.forwardMethod().isEmpty())
-                        HookMethodManager.class.getMethod(info.forwardMethod(), params);
-                } catch (Exception e) {
-                    Loge("no this forward method:" + info.forwardMethod());
-                    forwardMethod = null;
-                }
+                switch (info.hook()) {
+                    case MODE_HOOK:
+                        hookMethod = method;
+                        forwardMethod = HookMethodManager.class.getMethod(info.forwardMethod(), params);
+                        doHook(targetMethod, hookMethod, forwardMethod, info.mode(), 0);
+                    case MODE_CALLBACK:
+                        hookMethod = getHookHandle(targetMethod);
+                        forwardMethod = generateForwardMethod(targetMethod, FastHookManager.class.getClassLoader(), targetParams);
 
-                if (targetMethod == null) {
-                    Loge("invalid target method or hook method item:" + info);
-                    continue;
-                }
+                        if (hookMethod == null || forwardMethod == null) {
+                            throwException(new NullPointerException());
+                        }
 
-                if (forwardMethod != null && !isNativeMethod(forwardMethod)) {
-                    Loge("forward method must be native method item:" + info);
-                    continue;
+                        Object callback = method.invoke(null, new Object[targetParams.length]);
+                        if (callback instanceof FastHookCallback) {
+                            doHook(targetMethod, hookMethod, forwardMethod, targetParams, (FastHookCallback) callback, info.mode(), 0);
+                        }
+                    default:
                 }
 
                 Logd("doHook Mode:" + info);
-                doHook(targetMethod, method, forwardMethod, info.mode(), 0);
 
                 if (!jitInline && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     disableJITInline();
