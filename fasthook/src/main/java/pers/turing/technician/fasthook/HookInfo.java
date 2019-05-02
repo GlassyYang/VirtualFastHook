@@ -14,11 +14,5 @@ public @interface HookInfo {
 
     String beHookedMethod();
 
-    String beHookedMethodSig() default "";
-
-    String hookMethodSig() default "Ljava/lang/Object;";
-
     String forwardMethod() default "forward";
-
-    String forwardMethodSig() default "Ljava/lang/Object;";
 }

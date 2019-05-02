@@ -135,12 +135,12 @@ public class FastHookManager {
             HookInfo info = method.getAnnotation(HookInfo.class);
             if (info == null) continue;
             try {
+                Class[] params = method.getParameterTypes();
+                Class[] targetParams = Arrays.copyOfRange(method.getParameterTypes(), 1, params.length);
+                Member forwardMethod = HookMethodManager.class.getMethod(info.forwardMethod(), params);
+                Member targetMethod = Class.forName(info.beHookedClass(), true, targetClassLoader).getDeclaredMethod(info.beHookedMethod(), targetParams);
 
-                Member targetMethod = getMethod(info.beHookedClass(), info.beHookedMethod(), info.beHookedMethodSig(), targetClassLoader, null, null);
-                Member hookMethod = getMethod(HookMethodManager.class.getName(), method.getName(), info.hookMethodSig(), null, null, null);
-                Member forwardMethod = getMethod(HookMethodManager.class.getName(), info.forwardMethod(), info.forwardMethodSig(), null, null, null);
-
-                if (targetMethod == null || hookMethod == null) {
+                if (targetMethod == null) {
                     Loge("invalid target method or hook method item:" + info);
                     continue;
                 }
@@ -151,7 +151,7 @@ public class FastHookManager {
                 }
 
                 Logd("doHook Mode:" + info);
-                doHook(targetMethod, hookMethod, forwardMethod, info.mode(), 0);
+                doHook(targetMethod, method, forwardMethod, info.mode(), 0);
 
                 if (!jitInline && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     disableJITInline();
