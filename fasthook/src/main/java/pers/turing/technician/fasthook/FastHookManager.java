@@ -136,7 +136,7 @@ public class FastHookManager {
             if (info == null) continue;
             try {
 
-                Member targetMethod = getMethod(info.beHookedClass().getName(), info.beHookedMethod(), info.beHookedMethodSig(), targetClassLoader, null, null);
+                Member targetMethod = getMethod(info.beHookedClass(), info.beHookedMethod(), info.beHookedMethodSig(), targetClassLoader, null, null);
                 Member hookMethod = getMethod(HookMethodManager.class.getName(), method.getName(), info.hookMethodSig(), null, null, null);
                 Member forwardMethod = getMethod(HookMethodManager.class.getName(), info.forwardMethod(), info.forwardMethodSig(), null, null, null);
 

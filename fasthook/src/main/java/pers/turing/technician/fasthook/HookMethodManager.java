@@ -1,28 +1,30 @@
 package pers.turing.technician.fasthook;
 
 import android.app.ActivityManager;
-import android.telephony.TelephonyManager;
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
-import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
 public class HookMethodManager {
-    @HookInfo(beHookedClass = TelephonyManager.class,
+    @HookInfo(beHookedClass = "android.telephony.TelephonyManager",
             beHookedMethod = "getDeviceId")
     public static String hookDeviceId(Object thiz) {
         Log.i("FAST", "TelephonyManager getDeviceId hooked");
         return "123456789012345";
     }
 
-    @HookInfo(beHookedClass = ActivityManager.class,
+    @HookInfo(beHookedClass = "android.app.ActivityManager",
             beHookedMethod = "getRunningTasks",
             beHookedMethodSig = "I")
     public static List<ActivityManager.RunningTaskInfo> hookRunningTasks(Object thiz) {
-        Log.i("FAST", "TelephonyManager getDeviceId hooked");
+        Log.i("FAST", "ActivityManager getRunningTasks hooked");
         return new LinkedList<>();
     }
 
     public native static String forward(Object thiz);
+
+    public native static String forward(Object thiz, Context context);
 }

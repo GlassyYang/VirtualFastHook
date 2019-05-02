@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 public @interface HookInfo {
     int mode() default MODE_REWRITE;
 
-    Class beHookedClass();
+    String beHookedClass();
 
     String beHookedMethod();
 
