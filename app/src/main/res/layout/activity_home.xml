@@ -88,7 +88,7 @@
             android:id="@+id/create_shortcut_area"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
+            android:layout_weight="0.333"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -108,14 +108,13 @@
                 android:padding="5dp"
                 android:text="@string/create_shortcut"
                 android:textColor="@android:color/white" />
-
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/delete_app_area"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
+            android:layout_weight="0.333"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -137,7 +136,31 @@
                 android:textColor="@android:color/white" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/app_setting_area"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.333"
+            android:gravity="center"
+            android:orientation="horizontal">
 
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_setting" />
+
+            <TextView
+                android:id="@+id/app_setting_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:background="@color/colorPrimary"
+                android:gravity="center|start"
+                android:padding="5dp"
+                android:text="@string/setting"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>

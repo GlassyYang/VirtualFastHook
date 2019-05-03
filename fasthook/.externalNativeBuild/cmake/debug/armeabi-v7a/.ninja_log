@@ -1,7 +1,4 @@
 # ninja log v5
-0	98	0	CMakeFiles/fasthook.dir/src/main/cpp/enhanced_dlfcn.c.o	92d748afd0624f88
-0	217	0	CMakeFiles/fasthook.dir/src/main/cpp/fast_hook_manager.c.o	a09c77ef5f4eda1f
-217	257	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libfasthook.so	e68182a61226b2b6
-13	158	0	CMakeFiles/fasthook.dir/src/main/cpp/enhanced_dlfcn.c.o	92d748afd0624f88
-14	276	0	CMakeFiles/fasthook.dir/src/main/cpp/fast_hook_manager.c.o	a09c77ef5f4eda1f
-276	339	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libfasthook.so	e68182a61226b2b6
+6	187	0	CMakeFiles/fasthook.dir/src/main/cpp/enhanced_dlfcn.c.o	f477b4c0f5f8ffa6
+0	268	0	CMakeFiles/fasthook.dir/src/main/cpp/fast_hook_manager.c.o	6f3a32c39c21dcee
+269	363	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libfasthook.so	cfc11e461b845760

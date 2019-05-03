@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VirtualFastHook</string>
+    <string name="app_name">VirtualShield</string>
     <string name="desktop">桌面</string>
     <string name="add_app">添加App</string>
     <string name="preparing">正在打开App，请稍等…</string>
@@ -21,4 +21,7 @@
     <string name="external_storage">外置存储</string>
     <string name="install_d">安装 (%d)</string>
     <string name="install_too_much_once_time">不能一次性安装超过9个App!</string>
+    <string name="settings">设置</string>
+    <string name="setting">选项</string>
+    <string name="ret">返回</string>
 </resources>

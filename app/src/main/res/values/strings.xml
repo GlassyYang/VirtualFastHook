@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VirtualFastHook</string>
+    <string name="app_name">VirtualShield</string>
     <string name="wait">Please wait…</string>
     <string name="desktop">Desktop</string>
     <string name="add_app">Add App</string>
@@ -21,4 +21,7 @@
     <string name="external_storage">External Storage</string>
     <string name="install_d">Install (%d)</string>
     <string name="install_too_much_once_time">No more then 9 apps can be chosen at a time!</string>
+    <string name="settings">Settings</string>
+    <string name="setting">setting</string>
+    <string name="ret">return</string>
 </resources>

@@ -17,6 +17,7 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.View;
@@ -74,6 +75,8 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
     private TextView mCreateShortcutTextView;
     private View mDeleteAppBox;
     private TextView mDeleteAppTextView;
+    private View mSettingsBox;
+    private TextView mSettingAppTextView;
     private LaunchpadAdapter mLaunchpadAdapter;
     private Handler mUiHandler;
 
@@ -135,7 +138,8 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
         });
         menu.add("Settings").setIcon(R.drawable.ic_settings).setOnMenuItemClickListener(item -> {
             Toast.makeText(this, "The coming", Toast.LENGTH_SHORT).show();
-            return false;
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
         });
         mMenuView.setOnClickListener(v -> mPopupMenu.show());
     }
@@ -160,6 +164,8 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
         mCreateShortcutTextView = (TextView) findViewById(R.id.create_shortcut_text);
         mDeleteAppBox = findViewById(R.id.delete_app_area);
         mDeleteAppTextView = (TextView) findViewById(R.id.delete_app_text);
+        mSettingsBox = findViewById(R.id.app_setting_area);
+        mSettingAppTextView = (TextView) findViewById(R.id.app_setting_text);
     }
 
     private void initLaunchpad() {
@@ -345,6 +351,7 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
         int[] location = new int[2];
         boolean upAtDeleteAppArea;
         boolean upAtCreateShortcutArea;
+        boolean upAtSettingsArea;
         RecyclerView.ViewHolder dragHolder;
 
         LauncherTouchCallback() {
@@ -434,6 +441,10 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
                         createShortcut(viewHolder.getAdapterPosition());
                     } else if (upAtDeleteAppArea) {
                         deleteApp(viewHolder.getAdapterPosition());
+                    }else if(upAtSettingsArea){
+                        Intent intent = new Intent();
+                        intent.setClass(HomeActivity.this, SettingsActivity.class);
+                        startActivity(intent);
                     }
                 }
                 dragHolder = null;
@@ -455,28 +466,40 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
             itemView.getLocationInWindow(location);
             int x = (int) (location[0] + dX);
             int y = (int) (location[1] + dY);
-
             mBottomArea.getLocationInWindow(location);
             int baseLine = location[1] - mBottomArea.getHeight();
             if (y >= baseLine) {
                 mDeleteAppBox.getLocationInWindow(location);
                 int deleteAppAreaStartX = location[0];
+                int settingsAppAreaStartX = deleteAppAreaStartX << 1;
                 if (x < deleteAppAreaStartX) {
                     upAtCreateShortcutArea = true;
                     upAtDeleteAppArea = false;
+                    upAtSettingsArea = false;
                     mCreateShortcutTextView.setTextColor(Color.parseColor("#0099cc"));
                     mDeleteAppTextView.setTextColor(Color.WHITE);
-                } else {
+                    mSettingAppTextView.setTextColor(Color.WHITE);
+                } else if (x < settingsAppAreaStartX){
                     upAtDeleteAppArea = true;
                     upAtCreateShortcutArea = false;
+                    upAtSettingsArea = false;
                     mDeleteAppTextView.setTextColor(Color.parseColor("#0099cc"));
                     mCreateShortcutTextView.setTextColor(Color.WHITE);
+                    mSettingAppTextView.setTextColor(Color.WHITE);
+                }else{
+                    upAtSettingsArea = true;
+                    upAtDeleteAppArea = false;
+                    upAtCreateShortcutArea = false;
+                    mSettingAppTextView.setTextColor(Color.parseColor("#0099cc"));
+                    mCreateShortcutTextView.setTextColor(Color.WHITE);
+                    mDeleteAppTextView.setTextColor(Color.WHITE);
                 }
             } else {
                 upAtCreateShortcutArea = false;
                 upAtDeleteAppArea = false;
                 mDeleteAppTextView.setTextColor(Color.WHITE);
                 mCreateShortcutTextView.setTextColor(Color.WHITE);
+                mSettingAppTextView.setTextColor(Color.WHITE);
             }
         }
     }

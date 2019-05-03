@@ -1,10 +1,10 @@
 
 {
-	"buildFiles" : [ "/home/along/Work/VirtualFastHook/fasthook/CMakeLists.txt" ],
+	"buildFiles" : [ "F:/android/VirtualFastHook/fasthook/CMakeLists.txt" ],
 	"cFileExtensions" : [ "c" ],
 	"cleanCommands" : 
 	[
-		"/home/along/Android/Sdk/cmake/3.6.4111459/bin/cmake --build /home/along/Work/VirtualFastHook/fasthook/.externalNativeBuild/cmake/debug/armeabi-v7a --target clean"
+		"E:\\androidSDK\\cmake\\3.6.4111459\\bin\\cmake.exe --build F:\\android\\VirtualFastHook\\fasthook\\.externalNativeBuild\\cmake\\debug\\armeabi-v7a --target clean"
 	],
 	"libraries" : 
 	{
@@ -12,33 +12,33 @@
 		{
 			"abi" : "armeabi-v7a",
 			"artifactName" : "fasthook",
-			"buildCommand" : "/home/along/Android/Sdk/cmake/3.6.4111459/bin/cmake --build /home/along/Work/VirtualFastHook/fasthook/.externalNativeBuild/cmake/debug/armeabi-v7a --target fasthook",
+			"buildCommand" : "E:\\androidSDK\\cmake\\3.6.4111459\\bin\\cmake.exe --build F:\\android\\VirtualFastHook\\fasthook\\.externalNativeBuild\\cmake\\debug\\armeabi-v7a --target fasthook",
 			"buildType" : "debug",
 			"files" : 
 			[
 				
 				{
-					"flags" : "  --target=armv7-none-linux-androideabi21 --gcc-toolchain=/home/along/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/home/along/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/sysroot -Dfasthook_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mfpu=vfpv3-d16 -fno-addrsig -march=armv7-a -mthumb -Wa,--noexecstack -Wformat -Werror=format-security  -O0 -fno-limit-debug-info  -fPIC      -c ",
-					"src" : "/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/enhanced_dlfcn.c",
-					"workingDirectory" : "/home/along/Work/VirtualFastHook/fasthook/.externalNativeBuild/cmake/debug/armeabi-v7a"
+					"flags" : "  --target=armv7-none-linux-androideabi21 --gcc-toolchain=E:/androidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=E:/androidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dfasthook_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mfpu=vfpv3-d16 -fno-addrsig -march=armv7-a -mthumb -Wa,--noexecstack -Wformat -Werror=format-security  -O0 -fno-limit-debug-info  -fPIC      -c ",
+					"src" : "F:/android/VirtualFastHook/fasthook/src/main/cpp/enhanced_dlfcn.c",
+					"workingDirectory" : "F:/android/VirtualFastHook/fasthook/.externalNativeBuild/cmake/debug/armeabi-v7a"
 				},
 				
 				{
-					"flags" : "  --target=armv7-none-linux-androideabi21 --gcc-toolchain=/home/along/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/home/along/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/sysroot -Dfasthook_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mfpu=vfpv3-d16 -fno-addrsig -march=armv7-a -mthumb -Wa,--noexecstack -Wformat -Werror=format-security  -O0 -fno-limit-debug-info  -fPIC      -c ",
-					"src" : "/home/along/Work/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.c",
-					"workingDirectory" : "/home/along/Work/VirtualFastHook/fasthook/.externalNativeBuild/cmake/debug/armeabi-v7a"
+					"flags" : "  --target=armv7-none-linux-androideabi21 --gcc-toolchain=E:/androidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=E:/androidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dfasthook_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mfpu=vfpv3-d16 -fno-addrsig -march=armv7-a -mthumb -Wa,--noexecstack -Wformat -Werror=format-security  -O0 -fno-limit-debug-info  -fPIC      -c ",
+					"src" : "F:/android/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.c",
+					"workingDirectory" : "F:/android/VirtualFastHook/fasthook/.externalNativeBuild/cmake/debug/armeabi-v7a"
 				}
 			],
-			"output" : "/home/along/Work/VirtualFastHook/fasthook/build/intermediates/cmake/debug/obj/armeabi-v7a/libfasthook.so",
-			"toolchain" : "307057098155605844"
+			"output" : "F:/android/VirtualFastHook/fasthook/build/intermediates/cmake/debug/obj/armeabi-v7a/libfasthook.so",
+			"toolchain" : "3470645107"
 		}
 	},
 	"toolchains" : 
 	{
-		"307057098155605844" : 
+		"3470645107" : 
 		{
-			"cCompilerExecutable" : "/home/along/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/clang",
-			"cppCompilerExecutable" : "/home/along/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++"
+			"cCompilerExecutable" : "E:/androidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
+			"cppCompilerExecutable" : "E:/androidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
 		}
 	}
 }
