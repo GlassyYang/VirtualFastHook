@@ -20,11 +20,9 @@ import java.util.Objects;
 
 import android.hardware.Camera;
 
-import static android.content.ContentValues.TAG;
-
-import android.content.ContentResolver;
-
 public class HookMethodManager {
+    public static String TAG = "HookMethodManager";
+
     private static Map<String, boolean[]> HOOK_LIST;
     private static HookMethodManager manager = null;
 
@@ -113,42 +111,32 @@ public class HookMethodManager {
     public static native void forwardSendTextMessage(Object thiz, String destinationAddress, String scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent);
 
 
-    // 发送信息
+    // 短信读取
     @HookPrivacyInfo(beHookedClass = "android.content.ContentResolver", beHookedMethod = "query", forwardMethod = "forwardQuery", pravicy = HookPrivacyInfo.PRAVICY_SMS)
     Cursor HookQuery(Object thiz, final Uri uri, String[] projection, Bundle queryArgs, CancellationSignal cancellationSignal) {
-        try {
-            Log.d(TAG, "HookQuery: " + uri.toString());
-            if (Objects.equals(uri.getHost(), "SMS"))
-                return null;
-            return forwardQuery(thiz, uri, projection, queryArgs, cancellationSignal);
-        } catch (Exception e) {
-            return null;
+        Log.d(TAG, "Query Hooked");
+        if (Objects.equals(uri.getHost(), "SMS")) {
+            Log.d(TAG, "Query SMS");
+            return forwardQuery(thiz, Uri.parse("HOOK://HOOK"), projection, queryArgs, cancellationSignal);
         }
+        return forwardQuery(thiz, uri, projection, queryArgs, cancellationSignal);
     }
 
     public static native Cursor forwardQuery(Object thiz, final Uri uri, String[] projection, Bundle queryArgs, CancellationSignal cancellationSignal);
 
     @HookPrivacyInfo(beHookedClass = "android.content.ContentResolver", beHookedMethod = "query", forwardMethod = "forwardQuery", pravicy = HookPrivacyInfo.PRAVICY_SMS)
-    Cursor HookQuery(Object thiz, final Uri uri, String[] projection, String arg1, String[] queryArgs, String arg2, CancellationSignal cancellationSignal) {
-        try {
-            Log.d(TAG, "HookQuery: " + uri.toString());
-            if (Objects.equals(uri.getHost(), "SMS"))
-                return null;
-            return forwardQuery(thiz, uri, projection, arg1, queryArgs, arg2, cancellationSignal);
-        } catch (Exception e) {
-            return null;
+    Cursor HookQuery(Object thiz, Uri uri, String[] arg1, String arg2, String[] arg3, String arg4, CancellationSignal arg5) {
+        Log.d(TAG, "Query Hooked");
+        if (Objects.equals(uri.getHost(), "SMS")) {
+            Log.d(TAG, "Query SMS");
+            return forwardQuery(thiz, Uri.parse("HOOK://HOOK"), arg1, arg2, arg3, arg4, arg5);
         }
+        return forwardQuery(thiz, uri, arg1, arg2, arg3, arg4, arg5);
     }
 
-    // android.net.Uri,
-    // java.lang.String[],
-    // java.lang.String,
-    // java.lang.String[],
-    // java.lang.String,
-    // android.os.CancellationSignal
-    public static native Cursor forwardQuery(Object thiz, final Uri uri, String[] projection, String arg1, String[] queryArgs, String arg2, CancellationSignal cancellationSignal);
+    public static native Cursor forwardQuery(Object thiz, Uri uri, String[] arg1, String arg2, String[] arg3, String arg4, CancellationSignal arg5);
 
-    // 短信读取
+
     @HookPrivacyInfo(beHookedClass = "com.android.internal.telephony.gsm.SmsMessage$PduParser", beHookedMethod = "getUserDataUCS2", forwardMethod = "forwardGetUserDataUCS2", pravicy = HookPrivacyInfo.PRAVICY_SMS)
     public static String hookGetSMS(Object thiz, int byteCount) {
         return "";

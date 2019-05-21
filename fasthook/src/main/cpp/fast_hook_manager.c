@@ -178,30 +178,30 @@ void SignalHandle(int signal, siginfo_t *info, void *reserved) {
 
 void static inline InitTrampoline(int version) {
 #if defined(__arm__)
-    switch (version) {
+    switch(version) {
         case kAndroidP:
-            hook_trampoline_[18] = 0x18;
+            hook_trampoline_[22] = 0x18;
             break;
         case kAndroidOMR1:
         case kAndroidO:
-            hook_trampoline_[18] = 0x1c;
+            hook_trampoline_[22] = 0x1c;
             break;
         case kAndroidNMR1:
         case kAndroidN:
-            hook_trampoline_[18] = 0x20;
+            hook_trampoline_[22] = 0x20;
             break;
         case kAndroidM:
-            hook_trampoline_[18] = 0x24;
+            hook_trampoline_[22] = 0x24;
             break;
         case kAndroidLMR1:
-            hook_trampoline_[18] = 0x2c;
+            hook_trampoline_[22] = 0x2c;
             break;
         case kAndroidL:
-            hook_trampoline_[18] = 0x28;
+            hook_trampoline_[22] = 0x28;
             break;
     }
 #elif defined(__aarch64__)
-    switch(version) {
+    switch (version) {
         case kAndroidP:
             hook_trampoline_[17] = 0x10;
             break;
@@ -227,23 +227,26 @@ void static inline InitTrampoline(int version) {
 }
 
 void DisableHiddenApiCheck(JNIEnv *env, jclass clazz) {
-    if(kHiddenApiPolicyOffset > 0) {
+    if (kHiddenApiPolicyOffset > 0) {
         int offset = 0;
         int no_check = 0;
 
-        int policy = ReadInt32((unsigned char *)runtime_ + kHiddenApiPolicyOffset);
-        if(policy != kDarkGreyAndBlackList) {
+        int policy = ReadInt32((unsigned char *) runtime_ + kHiddenApiPolicyOffset);
+        if (policy != kDarkGreyAndBlackList) {
             int index = 0;
-            for(index = 0; index < kHiddenApiPolicyScope; index++) {
-                if(ReadInt32((unsigned char *)runtime_ + kHiddenApiPolicyOffset + index) == kDarkGreyAndBlackList) {
+            for (index = 0; index < kHiddenApiPolicyScope; index++) {
+                if (ReadInt32((unsigned char *) runtime_ + kHiddenApiPolicyOffset + index) ==
+                    kDarkGreyAndBlackList) {
                     offset = index;
-                }else if(ReadInt32((unsigned char *)runtime_ + kHiddenApiPolicyOffset - index) == kDarkGreyAndBlackList) {
+                } else if (ReadInt32((unsigned char *) runtime_ + kHiddenApiPolicyOffset - index) ==
+                           kDarkGreyAndBlackList) {
                     offset = -index;
                 }
             }
         }
-        memcpy((unsigned char *)runtime_ + kHiddenApiPolicyOffset + offset,&no_check,4);
-        LOGI("Disable Hidden Api Check:%d",ReadInt32((unsigned char *)runtime_ + kHiddenApiPolicyOffset + offset));
+        memcpy((unsigned char *) runtime_ + kHiddenApiPolicyOffset + offset, &no_check, 4);
+        LOGI("Disable Hidden Api Check:%d",
+             ReadInt32((unsigned char *) runtime_ + kHiddenApiPolicyOffset + offset));
     }
 }
 
@@ -344,7 +347,7 @@ jint Init(JNIEnv *env, jclass clazz, jint version) {
 
 jobject Is32bit(JNIEnv *env, jclass clazz) {
     if (sizeof(long) == kPointerSize32) {
-        return (jobject) true;
+        return true;
     }
     return false;
 }
@@ -400,9 +403,141 @@ jobject GetObjectParam(JNIEnv *env, jclass clazz, jlong sp, jint offset) {
     return result;
 }
 
-void PoseAsObject(JNIEnv *env, jclass clazz, jclass target_class) {
+jobject GetReflectedMethod32(JNIEnv *env, jclass clazz, jint art_method) {
+    jobject result = (*env)->ToReflectedMethod(env, clazz, (void *) art_method, JNI_FALSE);
+    return result;
+}
+
+jboolean GetBooleanParam32(JNIEnv *env, jclass clazz, jint address, jint offset, jint type) {
+    void *param_array = NULL;
+    switch (type) {
+        case kSp:
+            param_array = address;
+            break;
+        case kCoreRegArgs:
+            param_array = ReadPointer((unsigned char *) address + kCoreParamArrayOffset);
+            break;
+    }
+    jboolean result = (jboolean) ReadInt32((unsigned char *) param_array + offset);
+    return result;
+}
+
+jbyte GetByteParam32(JNIEnv *env, jclass clazz, jint address, jint offset, jint type) {
+    void *param_array = NULL;
+    switch (type) {
+        case kSp:
+            param_array = address;
+            break;
+        case kCoreRegArgs:
+            param_array = ReadPointer((unsigned char *) address + kCoreParamArrayOffset);
+            break;
+    }
+    jbyte result = (jbyte) ReadInt32((unsigned char *) param_array + offset);
+    return result;
+}
+
+jchar GetCharParam32(JNIEnv *env, jclass clazz, jint address, jint offset, jint type) {
+    void *param_array = NULL;
+    switch (type) {
+        case kSp:
+            param_array = address;
+            break;
+        case kCoreRegArgs:
+            param_array = ReadPointer((unsigned char *) address + kCoreParamArrayOffset);
+            break;
+    }
+    jchar result = (jchar) ReadInt32((unsigned char *) param_array + offset);
+    return result;
+}
+
+jshort GetShortParam32(JNIEnv *env, jclass clazz, jint address, jint offset, jint type) {
+    void *param_array = NULL;
+    switch (type) {
+        case kSp:
+            param_array = address;
+            break;
+        case kCoreRegArgs:
+            param_array = ReadPointer((unsigned char *) address + kCoreParamArrayOffset);
+            break;
+    }
+    jshort result = (jshort) ReadInt32((unsigned char *) param_array + offset);
+    return result;
+}
+
+jint GetIntParam32(JNIEnv *env, jclass clazz, jint address, jint offset, jint type) {
+    void *param_array = NULL;
+    switch (type) {
+        case kSp:
+            param_array = address;
+            break;
+        case kCoreRegArgs:
+            param_array = ReadPointer((unsigned char *) address + kCoreParamArrayOffset);
+            break;
+    }
+    jint result = (jint) ReadInt32((unsigned char *) param_array + offset);
+    return result;
+}
+
+jlong GetLongParam32(JNIEnv *env, jclass clazz, jint address, jint offset, jint type) {
+    void *param_array = NULL;
+    switch (type) {
+        case kSp:
+            param_array = address;
+            break;
+        case kCoreRegArgs:
+            param_array = ReadPointer((unsigned char *) address + kCoreParamArrayOffset);
+            break;
+    }
+    jlong result = (jlong) ReadInt64((unsigned char *) param_array + offset);
+    return result;
+}
+
+jfloat GetFloatParam32(JNIEnv *env, jclass clazz, jint address, jint offset, jint type) {
+    void *param_array = NULL;
+    switch (type) {
+        case kSp:
+            param_array = address;
+            break;
+        case kFpRegArgs:
+            param_array = ReadPointer((unsigned char *) address + kFloatParamArrayOffset);
+            break;
+    }
+    jfloat result = (jfloat) ReadFloat((unsigned char *) param_array + offset);
+    return result;
+}
+
+jdouble GetDoubleParam32(JNIEnv *env, jclass clazz, jint address, jint offset, jint type) {
+    void *param_array = NULL;
+    switch (type) {
+        case kSp:
+            param_array = address;
+            break;
+        case kFpRegArgs:
+            param_array = ReadPointer((unsigned char *) address + kFloatParamArrayOffset);
+            break;
+    }
+    jdouble result = (jdouble) ReadDouble((unsigned char *) param_array + offset);
+    return result;
+}
+
+jobject GetObjectParam32(JNIEnv *env, jclass clazz, jint address, jint offset, jint type) {
+    void *param_array = NULL;
+    switch (type) {
+        case kSp:
+            param_array = address;
+            break;
+        case kCoreRegArgs:
+            param_array = ReadPointer((unsigned char *) address + kCoreParamArrayOffset);
+            break;
+    }
+    void *obj = (void *) ReadInt32((unsigned char *) param_array + offset);
+    jobject result = new_local_ref_(env, obj);
+    return result;
+}
+
+void PoseAsObject(JNIEnv *env, jclass clazz, jclass target_class, jlong thread) {
     int super_class = 0;
-    void *art_target_class = decode_jobject_(CurrentThread(), target_class);
+    void *art_target_class = decode_jobject_(thread, target_class);
     memcpy((unsigned char *) art_target_class + kClassSuperOffset, &super_class, 4);
 }
 
@@ -494,16 +629,16 @@ bool DoRewriteHookCheck(JNIEnv *env, jclass clazz, jobject method) {
 #if defined(__arm__)
 
     int index = 0;
-    while (index < sizeof(jump_trampoline_)) {
-        uint16_t inst = ReadInt16((unsigned char *) method_code + index);
-        if (IsThumb32(inst, IsLittleEnd())) {
-            uint32_t inst_32 = ReadInt32((unsigned char *) method_code + index + 4);
-            if (HasThumb32PcRelatedInst(inst_32))
+    while(index < sizeof(jump_trampoline_)) {
+        uint16_t inst = ReadInt16((unsigned char *)method_code + index);
+        if(IsThumb32(inst,IsLittleEnd())) {
+            uint32_t inst_32 = ReadInt32((unsigned char *)method_code + index + 4);
+            if(HasThumb32PcRelatedInst(inst_32))
                 return false;
 
             index += 4;
-        } else {
-            if (HasThumb16PcRelatedInst(inst))
+        }else {
+            if(HasThumb16PcRelatedInst(inst))
                 return false;
 
             index += 2;
@@ -514,9 +649,9 @@ bool DoRewriteHookCheck(JNIEnv *env, jclass clazz, jobject method) {
 #elif defined(__aarch64__)
 
     int index = 0;
-    while(index < sizeof(jump_trampoline_)) {
-        uint32_t inst = ReadInt32((unsigned char *)method_code + index);
-        if(HasArm64PcRelatedInst(inst))
+    while (index < sizeof(jump_trampoline_)) {
+        uint32_t inst = ReadInt32((unsigned char *) method_code + index);
+        if (HasArm64PcRelatedInst(inst))
             return false;
 
         index += 4;
@@ -617,36 +752,33 @@ jint DoFullRewriteHook(JNIEnv *env, jclass clazz, jobject target_method, jobject
 
 #if defined(__arm__)
 
-    void *target_entry = (void *) ReadPointer(
-            (unsigned char *) art_target_method + kArtMethodQuickCodeOffset);
+    void *target_entry = (void *)ReadPointer((unsigned char *) art_target_method + kArtMethodQuickCodeOffset);
     void *target_code = EntryPointToCodePoint(target_entry);
     void *quick_hook_trampoline_entry = CodePointToEntryPoint(quick_hook_trampoline);
-    void *hook_entry = (void *) ReadPointer(
-            (unsigned char *) art_hook_method + kArtMethodQuickCodeOffset);
+    void *hook_entry = (void *)ReadPointer((unsigned char *) art_hook_method + kArtMethodQuickCodeOffset);
     void *next_entry = CodePointToEntryPoint(quick_original_trampoline);
     void *forward_entry = CodePointToEntryPoint(quick_target_trampoline);
 
     int jump_trampoline_len = 2 * 4;
-    int quick_hook_trampoline_len = 15 * 4;
+    int quick_hook_trampoline_len = 16 * 4;
     int quick_target_trampoline_len = 7 * 4;
     int quick_original_trampoline_len = 7 * 4;
     int original_prologue_len = 0;
-    while (original_prologue_len < jump_trampoline_len) {
-        if (IsThumb32(ReadInt16((unsigned char *) target_code + original_prologue_len),
-                      IsLittleEnd())) {
+    while(original_prologue_len < jump_trampoline_len) {
+        if(IsThumb32(ReadInt16((unsigned char *)target_code + original_prologue_len),IsLittleEnd())) {
             original_prologue_len += 4;
-        } else {
+        }else {
             original_prologue_len += 2;
         }
     }
-    LOGI("OriginalPrologueLen:%d", original_prologue_len);
+    LOGI("OriginalPrologueLen:%d",original_prologue_len);
 
     int jump_trampoline_entry_index = 4;
 
-    int quick_hook_trampoline_target_index = 44;
-    int quick_hook_trampoline_hook_index = 48;
-    int quick_hook_trampoline_hook_entry_index = 52;
-    int quick_hook_trampoline_next_entry_index = 56;
+    int quick_hook_trampoline_target_index = 48;
+    int quick_hook_trampoline_hook_index = 52;
+    int quick_hook_trampoline_hook_entry_index = 56;
+    int quick_hook_trampoline_next_entry_index = 60;
 
     int quick_target_trampoline_original_index = 4;
     int quick_target_trampoline_target_index = 20;
@@ -655,8 +787,7 @@ jint DoFullRewriteHook(JNIEnv *env, jclass clazz, jobject target_method, jobject
     int quick_original_trampoline_target_index = 4;
     int quick_original_trampoline_original_next_entry = 24;
 
-    void *original_next_entry = CodePointToEntryPoint(
-            (void *) ((long) target_entry + original_prologue_len));
+    void *original_next_entry = CodePointToEntryPoint((void *)((long)target_entry + original_prologue_len));
 
     unsigned char *original_code = (unsigned char *) quick_original_trampoline;
     original_code[0] = 0x00;
@@ -666,10 +797,12 @@ jint DoFullRewriteHook(JNIEnv *env, jclass clazz, jobject target_method, jobject
 
 #elif defined(__aarch64__)
 
-    void *target_entry = (void *)ReadPointer((unsigned char *) art_target_method + kArtMethodQuickCodeOffset);
+    void *target_entry = (void *) ReadPointer(
+            (unsigned char *) art_target_method + kArtMethodQuickCodeOffset);
     void *target_code = target_entry;
     void *quick_hook_trampoline_entry = quick_hook_trampoline;
-    void *hook_entry = (void *)ReadPointer((unsigned char *) art_hook_method + kArtMethodQuickCodeOffset);
+    void *hook_entry = (void *) ReadPointer(
+            (unsigned char *) art_hook_method + kArtMethodQuickCodeOffset);
     void *next_entry = quick_original_trampoline;
     void *forward_entry = quick_target_trampoline;
 
@@ -693,7 +826,7 @@ jint DoFullRewriteHook(JNIEnv *env, jclass clazz, jobject target_method, jobject
     int quick_original_trampoline_target_index = 4;
     int quick_original_trampoline_original_next_entry = 36;
 
-    void *original_next_entry = (void *)((long)target_entry + original_prologue_len);
+    void *original_next_entry = (void *) ((long) target_entry + original_prologue_len);
 
     unsigned char *original_code = (unsigned char *) quick_original_trampoline;
     original_code[0] = 0x1f;
@@ -856,21 +989,19 @@ jint DoPartRewriteHook(JNIEnv *env, jclass clazz, jobject target_method, jobject
 
 #if defined(__arm__)
 
-    void *target_entry = (void *) ReadPointer(
-            (unsigned char *) art_target_method + kArtMethodQuickCodeOffset);
-    void *hook_entry = (void *) ReadPointer(
-            (unsigned char *) art_hook_method + kArtMethodQuickCodeOffset);
-    void *next_entry = CodePointToEntryPoint((void *) quick_original_trampoline);
+    void *target_entry = (void *)ReadPointer((unsigned char *) art_target_method + kArtMethodQuickCodeOffset);
+    void *hook_entry = (void *)ReadPointer((unsigned char *) art_hook_method + kArtMethodQuickCodeOffset);
+    void *next_entry = CodePointToEntryPoint((void *)quick_original_trampoline);
     void *prev_next_entry = CodePointToEntryPoint(quick_hook_trampoline);
     void *forward_entry = CodePointToEntryPoint(quick_target_trampoline);
 
-    int quick_hook_trampoline_len = 15 * 4;
+    int quick_hook_trampoline_len = 16 * 4;
     int quick_target_trampoline_len = 7 * 4;
 
-    int quick_hook_trampoline_target_index = 44;
-    int quick_hook_trampoline_hook_index = 48;
-    int quick_hook_trampoline_hook_entry_index = 52;
-    int quick_hook_trampoline_next_entry_index = 56;
+    int quick_hook_trampoline_target_index = 48;
+    int quick_hook_trampoline_hook_index = 52;
+    int quick_hook_trampoline_hook_entry_index = 56;
+    int quick_hook_trampoline_next_entry_index = 60;
 
     int original_prologue_len = 12;
     int quick_original_trampoline_original_index = 4;
@@ -882,9 +1013,11 @@ jint DoPartRewriteHook(JNIEnv *env, jclass clazz, jobject target_method, jobject
 
 #elif defined(__aarch64__)
 
-    void *target_entry = (void *)ReadPointer((unsigned char *) art_target_method + kArtMethodQuickCodeOffset);
-    void *hook_entry = (void *)ReadPointer((unsigned char *) art_hook_method + kArtMethodQuickCodeOffset);
-    void *next_entry = (void *)quick_original_trampoline;
+    void *target_entry = (void *) ReadPointer(
+            (unsigned char *) art_target_method + kArtMethodQuickCodeOffset);
+    void *hook_entry = (void *) ReadPointer(
+            (unsigned char *) art_hook_method + kArtMethodQuickCodeOffset);
+    void *next_entry = (void *) quick_original_trampoline;
     void *prev_next_entry = quick_hook_trampoline;
     void *forward_entry = quick_target_trampoline;
 
@@ -1012,15 +1145,15 @@ jint DoReplaceHook(JNIEnv *env, jclass clazz, jobject target_method, jobject hoo
 
 #if defined(__arm__)
 
-    int hook_trampoline_len = 6 * 4;
+    int hook_trampoline_len = 7 * 4;
     int target_trampoline_len = 4 * 4;
 
-    int hook_trampoline_target_index = 20;
+    int hook_trampoline_target_index = 24;
     int target_trampoline_target_index = 8;
     int target_trampoline_target_entry_index = 12;
 
     void *new_target_entry = CodePointToEntryPoint(hook_trampoline);
-    void *new_forward_entry = CodePointToEntryPoint(target_trampoline);
+    void *new_forward_entry =  CodePointToEntryPoint(target_trampoline);
 
 #elif defined(__aarch64__)
 
@@ -1032,7 +1165,7 @@ jint DoReplaceHook(JNIEnv *env, jclass clazz, jobject target_method, jobject hoo
     int target_trampoline_target_entry_index = 20;
 
     void *new_target_entry = hook_trampoline;
-    void *new_forward_entry =  target_trampoline;
+    void *new_forward_entry = target_trampoline;
 
 #endif
 
@@ -1114,32 +1247,15 @@ jint DoReplaceHook(JNIEnv *env, jclass clazz, jobject target_method, jobject hoo
 }
 
 static JNINativeMethod JniMethods[] = {
-
         {"disableHiddenApiCheck", "()V",                                                    (void *) DisableHiddenApiCheck},
         {"init",                  "(I)V",                                                   (void *) Init},
-        {"is32bit",               "()Z",                                                    (void *) Is32bit},
-        {"getReflectedMethod",    "(J)Ljava/lang/reflect/Member;",                          (void *) GetReflectedMethod},
-        {"getBooleanParam",       "(JI)Z",                                                  (void *) GetBooleanParam},
-        {"getByteParam",          "(JI)B",                                                  (void *) GetByteParam},
-        {"getCharParam",          "(JI)C",                                                  (void *) GetCharParam},
-        {"getShortParam",         "(JI)S",                                                  (void *) GetShortParam},
-        {"getIntParam",           "(JI)I",                                                  (void *) GetIntParam},
-        {"getLongParam",          "(JI)J",                                                  (void *) GetLongParam},
-        {"getFloatParam",         "(JI)F",                                                  (void *) GetFloatParam},
-        {"getDoubleParam",        "(JI)D",                                                  (void *) GetDoubleParam},
-        {"getObjectParam",        "(JI)Ljava/lang/Object;",                                 (void *) GetObjectParam},
-        {"poseAsObject",          "(Ljava/lang/Class;)V",                                   (void *) PoseAsObject},
-        {"constructorToMethod",   "(Ljava/lang/reflect/Member;)Ljava/lang/reflect/Method;", (void *) ConstructorToMethod},
-        {"methodToConstructor",   "(Ljava/lang/reflect/Member;)V",                          (void *) MethodToConstructor},
         {"disableJITInline",      "()V",                                                    (void *) DisableJITInline},
         {"getMethodEntryPoint",   "(Ljava/lang/reflect/Member;)J",                          (void *) GetMethodEntryPoint},
         {"compileMethod",         "(Ljava/lang/reflect/Member;)Z",                          (void *) CompileMethod},
         {"isCompiled",            "(Ljava/lang/reflect/Member;)Z",                          (void *) IsCompiled},
         {"doRewriteHookCheck",    "(Ljava/lang/reflect/Member;)Z",                          (void *) DoRewriteHookCheck},
         {"isNativeMethod",        "(Ljava/lang/reflect/Member;)Z",                          (void *) IsNativeMethod},
-        {"isStaticMethod",        "(Ljava/lang/reflect/Member;)Z",                          (void *) IsStaticMethod},
         {"setNativeMethod",       "(Ljava/lang/reflect/Member;)V",                          (void *) SetNativeMethod},
-        {"setDirectMethod",       "(Ljava/lang/reflect/Member;)V",                          (void *) SetDirectMethod},
         {"checkJitState",         "(Ljava/lang/reflect/Member;)I",                          (void *) CheckJitState},
         {"doFullRewriteHook",     "(Ljava/lang/reflect/Member;Ljava/lang/reflect/Member;Ljava/lang/reflect/Member;Lpers/turing/technician/fasthook/FastHookManager$HookRecord;Lpers/turing/technician/fasthook/FastHookManager$HookRecord;Lpers/turing/technician/fasthook/FastHookManager$HookRecord;)I",
                                                                                             (void *) DoFullRewriteHook},
