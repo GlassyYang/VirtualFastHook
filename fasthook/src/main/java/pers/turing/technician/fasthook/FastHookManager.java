@@ -79,12 +79,14 @@ public class FastHookManager {
         Logd("Init");
     }
 
-    public static void doHook(ClassLoader targetClassLoader, boolean jitInline) {
+    public static void doHook(String process_name, ClassLoader targetClassLoader, boolean jitInline) {
         Method[] methods = HookMethodManager.class.getMethods();
 
+        boolean[] toHook = HookMethodManager.Instance().get_hook_method(process_name);
         for (Method method : methods) {
             HookPrivacyInfo info = method.getAnnotation(HookPrivacyInfo.class);
             if (info == null) continue;
+//            if (!toHook[info.pravicy()]) continue;
             try {
                 Class[] params = method.getParameterTypes();
                 Class[] targetParams = Arrays.copyOfRange(method.getParameterTypes(), 1, params.length);
@@ -98,6 +100,7 @@ public class FastHookManager {
                         hookMethod = method;
                         forwardMethod = HookMethodManager.class.getMethod(info.forwardMethod(), params);
                         doHook(targetMethod, hookMethod, forwardMethod, info.mode(), 0);
+                        break;
                     case MODE_CALLBACK:
                         hookMethod = getHookHandle(targetMethod);
                         forwardMethod = generateForwardMethod(targetMethod, FastHookManager.class.getClassLoader(), targetParams);
@@ -110,6 +113,7 @@ public class FastHookManager {
                         if (callback instanceof FastHookCallback) {
                             doHook(targetMethod, hookMethod, forwardMethod, targetParams, (FastHookCallback) callback, info.mode(), 0);
                         }
+                        break;
                     default:
                 }
 
@@ -119,7 +123,18 @@ public class FastHookManager {
                     disableJITInline();
                 }
             } catch (Exception e) {
+//                try {
+                Logd("Hook Failed: " + info);
                 e.printStackTrace();
+//                    Class beHook = Class.forName(info.beHookedClass(), true, targetClassLoader);
+//                    for (Member member : beHook.getDeclaredMethods()) {
+//                        if (member.getName().equals(info.beHookedMethod())) {
+//                            Logd("Find Method Can be Hooked:" + member.toString());
+//                        }
+//                    }
+//                } catch (Exception e1) {
+//                    e1.printStackTrace();
+//                }
             }
         }
     }
