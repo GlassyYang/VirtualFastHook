@@ -11,9 +11,17 @@ public @interface HookPrivacyInfo {
     static int MODE_HOOK = 1;
     static int MODE_CALLBACK = 2;
 
+    public static int PRAVICY_Camera = 0;
+    public static int PRAVICY_Net = 1;
+    public static int PRAVICY_SMS = 2;
+    public static int PRAVICY_IMEI = 3;
+    public static int PRAVICY_TASK = 4;
+
     int hook() default MODE_HOOK;
 
     int mode() default MODE_REWRITE;
+
+    int pravicy();
 
     String beHookedClass();
 
