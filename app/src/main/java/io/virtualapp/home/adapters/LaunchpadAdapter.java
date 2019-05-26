@@ -17,6 +17,7 @@ import io.virtualapp.home.models.AppData;
 import io.virtualapp.home.models.MultiplePackageAppData;
 import io.virtualapp.widgets.LabelView;
 import io.virtualapp.widgets.LauncherIconView;
+import pers.turing.technician.fasthook.HookMethodManager;
 
 /**
  * @author Lody
@@ -25,28 +26,41 @@ public class LaunchpadAdapter extends RecyclerView.Adapter<LaunchpadAdapter.View
 
     private LayoutInflater mInflater;
     private List<AppData> mList;
+    private HookMethodManager manager;
     private SparseIntArray mColorArray = new SparseIntArray();
     private OnAppClickListener mAppClickListener;
 
     public LaunchpadAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
+        manager = HookMethodManager.Instance(null);
     }
 
     public void add(AppData model) {
         int insertPos = mList.size() - 1;
         mList.add(insertPos, model);
         notifyItemInserted(insertPos);
+        for(int i = 0; i < 5; i++){
+            manager.register_hook_method(model.getName(), i);
+        }
     }
 
     public void replace(int index, AppData data) {
+        AppData app = mList.get(index);
+        manager.deleteApp(data.getName());
         mList.set(index, data);
+        manager.registerApp(data.getName());
         notifyItemChanged(index);
     }
 
     public void remove(AppData data) {
         if (mList.remove(data)) {
+            manager.deleteApp(data.getName());
             notifyDataSetChanged();
         }
+    }
+
+    public AppData get(int position){
+        return mList.get(position);
     }
 
     @Override

@@ -61,4 +61,5 @@ dependencies {
     implementation 'com.jonathanfinerty.once:once:1.0.3'
     implementation 'com.kyleduo.switchbutton:library:1.4.6'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    compile project(path: ':fasthook')
 }

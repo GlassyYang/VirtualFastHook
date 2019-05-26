@@ -1,10 +1,10 @@
 
 {
-	"buildFiles" : [ "F:/Test/FastHookApp/fasthook/CMakeLists.txt" ],
+	"buildFiles" : [ "F:/android/VirtualFastHook/fasthook/CMakeLists.txt" ],
 	"cFileExtensions" : [ "c" ],
 	"cleanCommands" : 
 	[
-		"E:\\AndroidSDK\\cmake\\3.6.4111459\\bin\\cmake.exe --build F:\\Test\\FastHookApp\\fasthook\\.externalNativeBuild\\cmake\\debug\\arm64-v8a --target clean"
+		"E:\\androidSDK\\cmake\\3.6.4111459\\bin\\cmake.exe --build F:\\android\\VirtualFastHook\\fasthook\\.externalNativeBuild\\cmake\\debug\\arm64-v8a --target clean"
 	],
 	"libraries" : 
 	{
@@ -12,33 +12,33 @@
 		{
 			"abi" : "arm64-v8a",
 			"artifactName" : "fasthook",
-			"buildCommand" : "E:\\AndroidSDK\\cmake\\3.6.4111459\\bin\\cmake.exe --build F:\\Test\\FastHookApp\\fasthook\\.externalNativeBuild\\cmake\\debug\\arm64-v8a --target fasthook",
+			"buildCommand" : "E:\\androidSDK\\cmake\\3.6.4111459\\bin\\cmake.exe --build F:\\android\\VirtualFastHook\\fasthook\\.externalNativeBuild\\cmake\\debug\\arm64-v8a --target fasthook",
 			"buildType" : "debug",
 			"files" : 
 			[
 				
 				{
-					"flags" : "  --target=aarch64-none-linux-android --gcc-toolchain=E:/AndroidSDK/ndk-bundle/toolchains/aarch64-linux-android-4.9/prebuilt/windows-x86_64 --sysroot=E:/AndroidSDK/ndk-bundle/sysroot -Dfasthook_EXPORTS  -isystem E:/AndroidSDK/ndk-bundle/sysroot/usr/include/aarch64-linux-android -D__ANDROID_API__=21 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -Wa,--noexecstack -Wformat -Werror=format-security  -O0 -fno-limit-debug-info  -fPIC      -c ",
-					"src" : "F:/Test/FastHookApp/fasthook/src/main/cpp/fake_dlfcn.c",
-					"workingDirectory" : "F:/Test/FastHookApp/fasthook/.externalNativeBuild/cmake/debug/arm64-v8a"
+					"flags" : "  --target=aarch64-none-linux-android21 --gcc-toolchain=E:/androidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=E:/androidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dfasthook_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -O0 -fno-limit-debug-info  -fPIC      -c ",
+					"src" : "F:/android/VirtualFastHook/fasthook/src/main/cpp/enhanced_dlfcn.c",
+					"workingDirectory" : "F:/android/VirtualFastHook/fasthook/.externalNativeBuild/cmake/debug/arm64-v8a"
 				},
 				
 				{
-					"flags" : "  --target=aarch64-none-linux-android --gcc-toolchain=E:/AndroidSDK/ndk-bundle/toolchains/aarch64-linux-android-4.9/prebuilt/windows-x86_64 --sysroot=E:/AndroidSDK/ndk-bundle/sysroot -Dfasthook_EXPORTS  -isystem E:/AndroidSDK/ndk-bundle/sysroot/usr/include/aarch64-linux-android -D__ANDROID_API__=21 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -Wa,--noexecstack -Wformat -Werror=format-security  -O0 -fno-limit-debug-info  -fPIC      -c ",
-					"src" : "F:/Test/FastHookApp/fasthook/src/main/cpp/fast_hook_manager.c",
-					"workingDirectory" : "F:/Test/FastHookApp/fasthook/.externalNativeBuild/cmake/debug/arm64-v8a"
+					"flags" : "  --target=aarch64-none-linux-android21 --gcc-toolchain=E:/androidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=E:/androidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dfasthook_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -O0 -fno-limit-debug-info  -fPIC      -c ",
+					"src" : "F:/android/VirtualFastHook/fasthook/src/main/cpp/fast_hook_manager.c",
+					"workingDirectory" : "F:/android/VirtualFastHook/fasthook/.externalNativeBuild/cmake/debug/arm64-v8a"
 				}
 			],
-			"output" : "F:/Test/FastHookApp/fasthook/build/intermediates/cmake/debug/obj/arm64-v8a/libfasthook.so",
-			"toolchain" : "2188260979"
+			"output" : "F:/android/VirtualFastHook/fasthook/build/intermediates/cmake/debug/obj/arm64-v8a/libfasthook.so",
+			"toolchain" : "3470645107"
 		}
 	},
 	"toolchains" : 
 	{
-		"2188260979" : 
+		"3470645107" : 
 		{
-			"cCompilerExecutable" : "E:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
-			"cppCompilerExecutable" : "E:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
+			"cCompilerExecutable" : "E:/androidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
+			"cppCompilerExecutable" : "E:/androidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
 		}
 	}
 }

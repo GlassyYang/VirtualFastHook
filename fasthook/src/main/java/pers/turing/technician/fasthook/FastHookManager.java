@@ -79,7 +79,7 @@ public class FastHookManager {
     public static void doHook(String process_name, ClassLoader targetClassLoader, boolean jitInline) {
         Method[] methods = HookMethodManager.class.getMethods();
 
-        boolean[] toHook = HookMethodManager.Instance().get_hook_method(process_name);
+        boolean[] toHook = HookMethodManager.Instance(null).get_hook_method(process_name);
         for (Method method : methods) {
             HookPrivacyInfo info = method.getAnnotation(HookPrivacyInfo.class);
             if (info == null) continue;

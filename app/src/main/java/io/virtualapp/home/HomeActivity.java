@@ -137,7 +137,6 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
             return true;
         });
         menu.add("Settings").setIcon(R.drawable.ic_settings).setOnMenuItemClickListener(item -> {
-            Toast.makeText(this, "The coming", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         });
@@ -379,6 +378,7 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
             int pos = viewHolder.getAdapterPosition();
+            Log.e(TAG, Integer.toString(pos));
             int targetPos = target.getAdapterPosition();
             mLaunchpadAdapter.moveItem(pos, targetPos);
             return true;
@@ -443,6 +443,8 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
                         deleteApp(viewHolder.getAdapterPosition());
                     }else if(upAtSettingsArea){
                         Intent intent = new Intent();
+                        String appName = mLaunchpadAdapter.get(viewHolder.getAdapterPosition()).getName();
+                        intent.putExtra("app_name", appName);
                         intent.setClass(HomeActivity.this, SettingsActivity.class);
                         startActivity(intent);
                     }
@@ -497,6 +499,7 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
             } else {
                 upAtCreateShortcutArea = false;
                 upAtDeleteAppArea = false;
+                upAtSettingsArea = false;
                 mDeleteAppTextView.setTextColor(Color.WHITE);
                 mCreateShortcutTextView.setTextColor(Color.WHITE);
                 mSettingAppTextView.setTextColor(Color.WHITE);

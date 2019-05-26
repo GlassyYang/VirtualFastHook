@@ -2,28 +2,29 @@ package pers.turing.technician.fasthook;
 
 import android.app.ActivityManager;
 import android.app.PendingIntent;
+import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.CancellationSignal;
+import android.database.sqlite.SQLiteDatabase;
 import android.telephony.SmsMessage;
 import android.util.Log;
+import android.hardware.Camera;
 
 import java.io.IOException;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-import android.hardware.Camera;
 
 public class HookMethodManager {
     public static String TAG = "HookMethodManager";
 
-    private static Map<String, boolean[]> HOOK_LIST;
+    //private static SharedPreferences HOOK_LIST;
+//    private static Map<String, boolean[]> HOOK_LIST;
+    private static DatabaseHelper dbHelper;
+    private static SQLiteDatabase db;
     private static HookMethodManager manager = null;
 
     // 在Privacy info中定义
@@ -34,37 +35,72 @@ public class HookMethodManager {
     //    public static int PRAVICY_TASK = 4;       任务列表
 
     // 单例模式
-    public static HookMethodManager Instance() {
+    public static HookMethodManager Instance(Context context) {
         if (manager == null) {
             manager = new HookMethodManager();
-            HOOK_LIST = new HashMap<>();
+            dbHelper = new DatabaseHelper(context, "privilege",null, 1);
+            db = dbHelper.getWritableDatabase();
         }
         return manager;
     }
 
     // 注册要hook的包名和要关闭的权限
-    public void register_hook_method(String app, int PARVICY) {
-        if (!HOOK_LIST.containsKey(app)) {
-            boolean[] value = new boolean[5];
-            for (boolean b : value) b = false;
-            HOOK_LIST.put(app, value);
+    public void register_hook_method(String app, int PARVICY){
+        String priStr = Integer.toString(PARVICY);
+        ContentValues values = new ContentValues();
+        Cursor cursor = queryPrivacy(app, priStr);
+        values.put("authorized", true);
+        if(cursor.getCount() != 0){
+            db.update("privilege", values, "app_name=? and pril_name=?", new String[]{app, priStr});
+        }else{
+            values.put("app_name", app);
+            values.put("pril_name", priStr);
+            db.insert("privilege",null, values);
         }
-        boolean[] array = HOOK_LIST.get(app);
-        assert array != null;
-        array[PARVICY] = true;
+    }
+
+    public void deleteApp(String app){
+        db.delete("privilege", "app_name=?", new String[]{app});
+    }
+
+    public void registerApp(String app){
+        for(int i = 0; i < 5; i++){
+            register_hook_method(app, i);
+        }
     }
 
     // 取消注册要hook的包名和要关闭的权限
     public void unregister_hook_method(String app, int PARVICY) {
-        if (!HOOK_LIST.containsKey(app)) return;
-        boolean[] array = HOOK_LIST.get(app);
-        assert array != null;
-        array[PARVICY] = false;
+        String priStr = Integer.toString(PARVICY);
+        ContentValues value = new ContentValues();
+        value.put("authorized", false);
+        Cursor cursor = queryPrivacy(app, priStr);
+        if(cursor.getCount() != 0){
+            db.update("privilege", value, "app_name=? and pril_name=?", new String[]{app, priStr});
+        }else{
+            value.put("app_name", app);
+            value.put("pril_name", priStr);
+            db.insert("privilege", null, value);
+        }
     }
 
-    boolean[] get_hook_method(String app) {
-        if (!HOOK_LIST.containsKey(app)) return null;
-        return HOOK_LIST.get(app);
+    private Cursor queryPrivacy(String app, String privacy){
+        return db.query("privilege", null, "app_name=? and pril_name=?", new String[]{app, privacy}, null, null, null, null);
+    }
+
+    private Cursor queryApp(String app){
+        return db.query("privilege", null, "app_name=?", new String[]{app}, null, null, null, null);
+    }
+
+    public boolean[] get_hook_method(String app) {
+        boolean[] res = new boolean[5];
+        Arrays.fill(res, true);
+        Cursor cursor = queryApp(app);
+        while(cursor.moveToNext()){
+            int privacy = cursor.getInt(cursor.getColumnIndex("pril_name"));
+            res[privacy] = cursor.getString(cursor.getColumnIndex("authorized")).equals("1");
+        }
+        return res;
     }
 
 

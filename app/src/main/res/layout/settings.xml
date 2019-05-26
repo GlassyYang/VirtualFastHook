@@ -1,31 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:text="@string/settings"
-        android:textSize="24sp" />
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="@string/settings"
+            android:textSize="24sp" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/res"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ret" />
 
     </RelativeLayout>
-    <ListView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/settings_list"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:text="拒绝应用调用摄像头"/>
+
+        <Switch
+            android:id="@+id/switch_camera"
+            android:layout_width="0dp"
+            android:textOn="关"
+            android:textOff="开"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:text="拒绝应用使用网络"/>
+
+        <Switch
+            android:id="@+id/switch_net"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textOn="关"
+            android:textOff="开"
+            android:layout_weight="0.4" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.6"
+            android:layout_height="wrap_content"
+            android:text="拒绝应用获取手机短信"/>
+
+        <Switch
+            android:id="@+id/switch_sms"
+            android:layout_width="0dp"
+            android:textOn="关"
+            android:textOff="开"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:text="拒绝应用获取设备码"/>
+
+        <Switch
+            android:id="@+id/switch_imei"
+            android:layout_width="0dp"
+            android:textOn="关"
+            android:textOff="开"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal" 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.6"
+            android:layout_height="wrap_content"
+            android:text="拒绝应用获取系统中正在运行的程序"/>
+        <Switch
+            android:id="@+id/switch_task"
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:textOn="关"
+            android:textOff="开"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 </LinearLayout>
