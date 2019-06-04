@@ -15,8 +15,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
+            android:background="@color/titleColor"
             android:gravity="start"
             android:orientation="horizontal"
             fab:layout_heightPercent="12%">
@@ -24,7 +23,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center|start"
+                android:gravity="center"
+                android:paddingStart="10dp"
                 android:text="@string/app_name"
                 android:textColor="@android:color/white"
                 android:textSize="22sp" />
@@ -84,83 +84,29 @@
         android:visibility="gone"
         android:weightSum="1">
 
-        <LinearLayout
-            android:id="@+id/create_shortcut_area"
+        <ImageView
+            android:id="@+id/create_shortcut"
+            android:layout_height="35dp"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:src="@drawable/ic_shortcut"
             android:layout_weight="0.333"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:tint="@color/bottom_icon"/>
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/ic_shortcut" />
-
-            <TextView
-                android:id="@+id/create_shortcut_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:background="@color/colorPrimary"
-                android:gravity="center|start"
-                android:padding="5dp"
-                android:text="@string/create_shortcut"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/delete_app_area"
+        <ImageView
+            android:id="@+id/delete_app"
+            android:layout_height="35dp"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:src="@drawable/ic_crash"
             android:layout_weight="0.333"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:tint="@color/bottom_icon"/>
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/ic_crash" />
-
-            <TextView
-                android:id="@+id/delete_app_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:background="@color/colorPrimary"
-                android:gravity="center|start"
-                android:padding="5dp"
-                android:text="@string/delete"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/app_setting_area"
+        <ImageView
+            android:id="@+id/app_settings"
+            android:layout_height="35dp"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:src="@drawable/ic_setting"
             android:layout_weight="0.333"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/ic_setting" />
-
-            <TextView
-                android:id="@+id/app_setting_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:background="@color/colorPrimary"
-                android:gravity="center|start"
-                android:padding="5dp"
-                android:text="@string/setting"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
+            android:tint="@color/bottom_icon" />
     </LinearLayout>
 
 </FrameLayout>

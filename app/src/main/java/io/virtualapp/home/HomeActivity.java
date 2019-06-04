@@ -22,6 +22,7 @@ import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,12 +72,9 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
     private View mMenuView;
     private PopupMenu mPopupMenu;
     private View mBottomArea;
-    private View mCreateShortcutBox;
-    private TextView mCreateShortcutTextView;
-    private View mDeleteAppBox;
-    private TextView mDeleteAppTextView;
-    private View mSettingsBox;
-    private TextView mSettingAppTextView;
+    private ImageView createShortcut;
+    private ImageView deleteApp;
+    private ImageView appSettings;
     private LaunchpadAdapter mLaunchpadAdapter;
     private Handler mUiHandler;
 
@@ -159,12 +157,9 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
         mLauncherView = (RecyclerView) findViewById(R.id.home_launcher);
         mMenuView = findViewById(R.id.home_menu);
         mBottomArea = findViewById(R.id.bottom_area);
-        mCreateShortcutBox = findViewById(R.id.create_shortcut_area);
-        mCreateShortcutTextView = (TextView) findViewById(R.id.create_shortcut_text);
-        mDeleteAppBox = findViewById(R.id.delete_app_area);
-        mDeleteAppTextView = (TextView) findViewById(R.id.delete_app_text);
-        mSettingsBox = findViewById(R.id.app_setting_area);
-        mSettingAppTextView = (TextView) findViewById(R.id.app_setting_text);
+        createShortcut = (ImageView)findViewById(R.id.create_shortcut);
+        deleteApp = (ImageView)findViewById(R.id.delete_app);
+        appSettings = (ImageView)findViewById(R.id.app_settings);
     }
 
     private void initLaunchpad() {
@@ -471,38 +466,26 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
             mBottomArea.getLocationInWindow(location);
             int baseLine = location[1] - mBottomArea.getHeight();
             if (y >= baseLine) {
-                mDeleteAppBox.getLocationInWindow(location);
+                deleteApp.getLocationInWindow(location);
                 int deleteAppAreaStartX = location[0];
                 int settingsAppAreaStartX = deleteAppAreaStartX << 1;
                 if (x < deleteAppAreaStartX) {
                     upAtCreateShortcutArea = true;
                     upAtDeleteAppArea = false;
                     upAtSettingsArea = false;
-                    mCreateShortcutTextView.setTextColor(Color.parseColor("#0099cc"));
-                    mDeleteAppTextView.setTextColor(Color.WHITE);
-                    mSettingAppTextView.setTextColor(Color.WHITE);
                 } else if (x < settingsAppAreaStartX){
                     upAtDeleteAppArea = true;
                     upAtCreateShortcutArea = false;
                     upAtSettingsArea = false;
-                    mDeleteAppTextView.setTextColor(Color.parseColor("#0099cc"));
-                    mCreateShortcutTextView.setTextColor(Color.WHITE);
-                    mSettingAppTextView.setTextColor(Color.WHITE);
                 }else{
                     upAtSettingsArea = true;
                     upAtDeleteAppArea = false;
                     upAtCreateShortcutArea = false;
-                    mSettingAppTextView.setTextColor(Color.parseColor("#0099cc"));
-                    mCreateShortcutTextView.setTextColor(Color.WHITE);
-                    mDeleteAppTextView.setTextColor(Color.WHITE);
                 }
             } else {
                 upAtCreateShortcutArea = false;
                 upAtDeleteAppArea = false;
                 upAtSettingsArea = false;
-                mDeleteAppTextView.setTextColor(Color.WHITE);
-                mCreateShortcutTextView.setTextColor(Color.WHITE);
-                mSettingAppTextView.setTextColor(Color.WHITE);
             }
         }
     }

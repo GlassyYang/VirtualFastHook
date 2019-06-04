@@ -1,14 +1,28 @@
 package pers.turing.technician.fasthook;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.telephony.SmsMessage;
+import android.util.Half;
 import android.util.Log;
 import android.hardware.Camera;
+import android.util.TimeUtils;
 
 import java.io.IOException;
 import java.net.URLConnection;
@@ -26,7 +40,7 @@ public class HookMethodManager {
     private static DatabaseHelper dbHelper;
     private static SQLiteDatabase db;
     private static HookMethodManager manager = null;
-
+    private static String SERVICE_ACTION = "io.virtualapp..action.HOOK_PRIVILEGE_SERVICE";
     // 在Privacy info中定义
     //    public static int PRAVICY_Camera = 0;     摄像头权限
     //    public static int PRAVICY_Net = 1;        网络权限
@@ -34,15 +48,20 @@ public class HookMethodManager {
     //    public static int PRAVICY_IMEI = 3;       手机号、IMEI等
     //    public static int PRAVICY_TASK = 4;       任务列表
 
+    private Context context;
+
     // 单例模式
     public static HookMethodManager Instance(Context context) {
         if (manager == null) {
             manager = new HookMethodManager();
+            manager.context = context;
             dbHelper = new DatabaseHelper(context, "privilege",null, 1);
             db = dbHelper.getWritableDatabase();
+            Log.d(TAG, "Instance: init");
         }
         return manager;
     }
+
 
     // 注册要hook的包名和要关闭的权限
     public void register_hook_method(String app, int PARVICY){
@@ -92,7 +111,7 @@ public class HookMethodManager {
         return db.query("privilege", null, "app_name=?", new String[]{app}, null, null, null, null);
     }
 
-    public boolean[] get_hook_method(String app) {
+    public boolean[] get_hook_method_service(String app) {
         boolean[] res = new boolean[5];
         Arrays.fill(res, true);
         Cursor cursor = queryApp(app);
@@ -103,6 +122,77 @@ public class HookMethodManager {
         return res;
     }
 
+    public boolean[] get_hook_method(String app){
+        final boolean[] ans = new boolean[5];
+        Arrays.fill(ans, true);
+//        final String appName = app;
+//        final boolean[] finished = new boolean[1];
+//        finished[0] = false;
+//        Log.d(TAG, "get_hook_method: 开始进行进程间通信");
+//        @SuppressLint("HandlerLeak") final Messenger clientMessager = new Messenger(new Handler(){
+//            @Override
+//            public void handleMessage(Message msg) {
+//                Bundle data = msg.getData();
+//                ans[0] = data.getBoolean("pri_0");
+//                ans[1] = data.getBoolean("pri_1");
+//                ans[2] = data.getBoolean("pri_2");
+//                ans[3] = data.getBoolean("pri_3");
+//                ans[4] = data.getBoolean("pri_4");
+//                finished[0] = true;
+//            }
+//        });
+//
+//        Log.d(TAG, "get_hook_method: 开始进行进程间通信2");
+//        ServiceConnection conn = new ServiceConnection(){
+//
+//            @Override
+//            public void onServiceConnected(ComponentName name, IBinder service) {
+//                Messenger  serviceMessenger = new Messenger(service);
+//                Message msg = Message.obtain();
+//                Bundle sent = new Bundle();
+//                sent.putString("app_name", appName);
+//                msg.replyTo = clientMessager;
+//                try{
+//                    serviceMessenger.send(msg);
+//                }catch (RemoteException e){
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onServiceDisconnected(ComponentName name) {
+//            }
+//        };
+//        Intent intent = new Intent();
+//        intent.setAction(SERVICE_ACTION);
+//        intent.addCategory(Intent.CATEGORY_DEFAULT);
+//
+//        Log.d(TAG, "get_hook_method: 开始进行进程间通信3");
+//        PackageManager pm = context.getPackageManager();
+//        //我们先通过一个隐式的Intent获取可能会被启动的Service的信息
+//        ResolveInfo info = pm.resolveService(intent, 0);
+//
+//        if(info != null) {
+//            String packageName = info.serviceInfo.packageName;
+//            String serviceNmae = info.serviceInfo.name;
+//            ComponentName componentName = new ComponentName(packageName, serviceNmae);
+//            intent.setComponent(componentName);
+//            try {
+//                Log.i("DemoLog", "客户端调用bindService方法");
+//                context.bindService(intent, conn, Context.BIND_AUTO_CREATE);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                Log.e("DemoLog", e.getMessage());
+//            }
+//        }
+//        //等待通信完成
+//        while(!finished[0]){
+//
+//        }
+//        Log.d(TAG, "get_hook_method: 到最后的了");
+//        context.unbindService(conn);
+        return ans;
+    }
 
     // 摄像头
     @HookPrivacyInfo(beHookedClass = "android.hardware.Camera", beHookedMethod = "takePicture", forwardMethod = "forwardTakePicture", pravicy = HookPrivacyInfo.PRAVICY_Camera)

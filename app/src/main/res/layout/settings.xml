@@ -2,11 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/colorPrimaryDark">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:background="@color/desktopColorA">
 
         <TextView
             android:id="@+id/textView"
@@ -15,25 +17,24 @@
             android:layout_centerInParent="true"
             android:gravity="center"
             android:text="@string/settings"
-            android:textSize="24sp" />
-
-        <Button
-            android:id="@+id/res"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ret" />
+            android:textSize="22sp"
+            android:textColor="@android:color/white" />
 
     </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.6"
-            android:text="拒绝应用调用摄像头"/>
+            android:text="拒绝应用调用摄像头"
+            android:textSize="18sp"
+            android:textColor="@color/bottom_icon"
+            android:layout_marginStart="20dp"/>
 
         <Switch
             android:id="@+id/switch_camera"
@@ -47,13 +48,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.6"
-            android:text="拒绝应用使用网络"/>
+            android:text="拒绝应用使用网络"
+            android:textSize="18sp"
+            android:textColor="@color/bottom_icon"
+            android:layout_marginStart="20dp"/>
 
         <Switch
             android:id="@+id/switch_net"
@@ -67,13 +72,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_weight="0.6"
             android:layout_height="wrap_content"
-            android:text="拒绝应用获取手机短信"/>
+            android:text="拒绝应用获取手机短信"
+            android:textSize="18sp"
+            android:textColor="@color/bottom_icon"
+            android:layout_marginStart="20dp"/>
 
         <Switch
             android:id="@+id/switch_sms"
@@ -87,13 +96,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.6"
-            android:text="拒绝应用获取设备码"/>
+            android:text="拒绝应用获取设备码"
+            android:textSize="18sp"
+            android:textColor="@color/bottom_icon"
+            android:layout_marginStart="20dp"/>
 
         <Switch
             android:id="@+id/switch_imei"
@@ -106,16 +119,62 @@
     <LinearLayout
         android:orientation="horizontal" 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="0.6"
+            android:layout_weight="0.7"
             android:layout_height="wrap_content"
-            android:text="拒绝应用获取系统中正在运行的程序"/>
+            android:text="拒绝应用获取后台程序信息"
+            android:textSize="18sp"
+            android:textColor="@color/bottom_icon"
+            android:layout_marginStart="20dp"/>
         <Switch
             android:id="@+id/switch_task"
             android:layout_width="0dp"
-            android:layout_weight="0.4"
+            android:layout_weight="0.3"
+            android:textOn="关"
+            android:textOff="开"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.7"
+            android:layout_height="wrap_content"
+            android:text="拒绝应用录音"
+            android:textSize="18sp"
+            android:textColor="@color/bottom_icon"
+            android:layout_marginStart="20dp"/>
+        <Switch
+            android:id="@+id/switch_record"
+            android:layout_width="0dp"
+            android:layout_weight="0.3"
+            android:textOn="关"
+            android:textOff="开"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.7"
+            android:layout_height="wrap_content"
+            android:text="拒绝应用获取当前的位置"
+            android:textSize="18sp"
+            android:textColor="@color/bottom_icon"
+            android:layout_marginStart="20dp"/>
+        <Switch
+            android:id="@+id/switch_location"
+            android:layout_width="0dp"
+            android:layout_weight="0.3"
             android:textOn="关"
             android:textOff="开"
             android:layout_height="wrap_content"/>

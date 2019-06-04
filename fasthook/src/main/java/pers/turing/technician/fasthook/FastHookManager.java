@@ -1,5 +1,6 @@
 package pers.turing.technician.fasthook;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -80,6 +81,8 @@ public class FastHookManager {
         Method[] methods = HookMethodManager.class.getMethods();
 
         boolean[] toHook = HookMethodManager.Instance(null).get_hook_method(process_name);
+//        boolean[] toHook = new boolean[5];
+        // Arrays.fill(toHook, true);
         for (Method method : methods) {
             HookPrivacyInfo info = method.getAnnotation(HookPrivacyInfo.class);
             if (info == null) continue;

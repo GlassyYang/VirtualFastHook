@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import io.virtualfasthook.R;
@@ -21,13 +18,9 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
         manager = HookMethodManager.Instance(null);
-        Button res = (Button)findViewById(R.id.res);
-        res.setOnClickListener((e)->{
-            finish();
-        });
         Intent intent = getIntent();
         String app = intent.getStringExtra("app_name");
-        boolean[] checked = manager.get_hook_method(intent.getStringExtra("app_name"));
+        boolean[] checked = manager.get_hook_method_service(intent.getStringExtra("app_name"));
         Switch canema = (Switch)findViewById(R.id.switch_camera);
         canema.setChecked(checked[0]);
         canema.setOnCheckedChangeListener((button, check)->{
