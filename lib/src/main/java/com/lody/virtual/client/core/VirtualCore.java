@@ -54,7 +54,6 @@ import java.util.List;
 import dalvik.system.DexFile;
 import mirror.android.app.ActivityThread;
 import pers.turing.technician.fasthook.FastHookManager;
-import pers.turing.technician.fasthook.HookMethodManager;
 
 /**
  * @author Lody
@@ -200,7 +199,6 @@ public final class VirtualCore {
                     return ServiceManagerNative.getService(serverName);
                 }
             });
-            HookMethodManager.Instance(context);
             detectProcessType();
             InvocationStubManager invocationStubManager = InvocationStubManager.getInstance();
             invocationStubManager.init();

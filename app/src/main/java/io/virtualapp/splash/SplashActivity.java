@@ -11,7 +11,6 @@ import io.virtualapp.abs.ui.VActivity;
 import io.virtualapp.abs.ui.VUiKit;
 import io.virtualapp.home.HomeActivity;
 import jonathanfinerty.once.Once;
-import pers.turing.technician.fasthook.HookMethodManager;
 
 public class SplashActivity extends VActivity {
 
@@ -22,7 +21,6 @@ public class SplashActivity extends VActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
-        HookMethodManager manager = HookMethodManager.Instance(getApplicationContext());
         setContentView(R.layout.activity_splash);
         VUiKit.defer().when(() -> {
             long time = System.currentTimeMillis();

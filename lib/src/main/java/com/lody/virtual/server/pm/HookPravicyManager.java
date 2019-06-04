@@ -19,8 +19,7 @@ public class HookPravicyManager {
             if (!mHookMethod.containsKey(process)) {
                 mHookMethod.put(process, 0);
             }
-            int p = mHookMethod.get(process);
-            mHookMethod.put(process, p | pravicy);
+            mHookMethod.put(process, pravicy);
         }
     }
 

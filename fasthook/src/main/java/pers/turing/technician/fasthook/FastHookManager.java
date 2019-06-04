@@ -78,34 +78,34 @@ public class FastHookManager {
     }
 
     public static void doHook(String process_name, ClassLoader targetClassLoader, int toHook, boolean jitInline) {
-        Method[] methods = HookMethodManager.class.getMethods();
-
-        for (Method method : methods) {
-            HookPrivacyInfo info = method.getAnnotation(HookPrivacyInfo.class);
-            if (info == null) continue;
-            if ((toHook & info.pravicy()) == 0) continue;
-            try {
-                Class[] params = method.getParameterTypes();
-                Class[] targetParams = Arrays.copyOfRange(method.getParameterTypes(), 1, params.length);
-
-                Member hookMethod = null;
-                Member forwardMethod = null;
-                Member targetMethod = Class.forName(info.beHookedClass(), true, targetClassLoader).getDeclaredMethod(info.beHookedMethod(), targetParams);
-
-                hookMethod = method;
-                forwardMethod = HookMethodManager.class.getMethod(info.forwardMethod(), params);
-                doHook(targetMethod, hookMethod, forwardMethod, info.mode(), 0);
-
-                Logd("doHook Mode:" + info);
-
-                if (!jitInline && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    disableJITInline();
-                }
-            } catch (Exception e) {
-                Logd("Hook Failed: " + info);
-                e.printStackTrace();
-            }
-        }
+//        Method[] methods = HookMethodManager.class.getMethods();
+//
+//        for (Method method : methods) {
+//            HookPrivacyInfo info = method.getAnnotation(HookPrivacyInfo.class);
+//            if (info == null) continue;
+//            if ((toHook & info.pravicy()) == 0) continue;
+//            try {
+//                Class[] params = method.getParameterTypes();
+//                Class[] targetParams = Arrays.copyOfRange(method.getParameterTypes(), 1, params.length);
+//
+//                Member hookMethod = null;
+//                Member forwardMethod = null;
+//                Member targetMethod = Class.forName(info.beHookedClass(), true, targetClassLoader).getDeclaredMethod(info.beHookedMethod(), targetParams);
+//
+//                hookMethod = method;
+//                forwardMethod = HookMethodManager.class.getMethod(info.forwardMethod(), params);
+//                doHook(targetMethod, hookMethod, forwardMethod, info.mode(), 0);
+//
+//                Logd("doHook Mode:" + info);
+//
+//                if (!jitInline && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                    disableJITInline();
+//                }
+//            } catch (Exception e) {
+//                Logd("Hook Failed: " + info);
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     public static void doHook(String hookInfoClassName, ClassLoader hookInfoClassLoader, ClassLoader targetClassLoader, ClassLoader hookClassLoader, ClassLoader forwardClassLoader, boolean jitInline) {

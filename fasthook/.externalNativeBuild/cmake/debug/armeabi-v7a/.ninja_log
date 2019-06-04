@@ -4,3 +4,6 @@
 823	979	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libfasthook.so	cfc11e461b845760
 4	1224	0	CMakeFiles/fasthook.dir/src/main/cpp/fast_hook_manager.c.o	6f3a32c39c21dcee
 1227	1538	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libfasthook.so	cfc11e461b845760
+7	273	0	CMakeFiles/fasthook.dir/src/main/cpp/enhanced_dlfcn.c.o	f477b4c0f5f8ffa6
+15	393	0	CMakeFiles/fasthook.dir/src/main/cpp/fast_hook_manager.c.o	6f3a32c39c21dcee
+395	660	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libfasthook.so	cfc11e461b845760
