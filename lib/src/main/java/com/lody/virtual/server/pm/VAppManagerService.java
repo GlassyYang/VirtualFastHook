@@ -117,9 +117,9 @@ public class VAppManagerService implements IAppManager {
         chmodPackageDictionary(cacheFile);
         PackageCacheManager.put(pkg, ps);
         BroadcastSystem.get().startApp(pkg);
-        if(ps.isHook) {
-            HookCacheManager.HookCacheInfo info = new HookCacheManager.HookCacheInfo(ps.packageName,(String)(pkg.mAppMetaData.get(HookCacheManager.HOOK_PROCESS)),(String)(pkg.mAppMetaData.get(HookCacheManager.HOOK_INFO)));
-            HookCacheManager.put((String)(pkg.mAppMetaData.get(HookCacheManager.HOOK_PROCESS)),info);
+        if (ps.isHook) {
+            HookCacheManager.HookCacheInfo info = new HookCacheManager.HookCacheInfo(ps.packageName, (String) (pkg.mAppMetaData.get(HookCacheManager.HOOK_PROCESS)), (String) (pkg.mAppMetaData.get(HookCacheManager.HOOK_INFO)));
+            HookCacheManager.put((String) (pkg.mAppMetaData.get(HookCacheManager.HOOK_PROCESS)), info);
         }
         return true;
     }
@@ -187,10 +187,9 @@ public class VAppManagerService implements IAppManager {
         if (res.isUpdate) {
             FileUtils.deleteDir(libDir);
             VEnvironment.getOdexFile(pkg.packageName).delete();
-            if(isHook) {
+            if (isHook) {
                 VActivityManagerService.get().killAllApps();
-            }
-            else {
+            } else {
                 VActivityManagerService.get().killAppByPkg(pkg.packageName, VUserHandle.USER_ALL);
             }
         }
@@ -207,7 +206,7 @@ public class VAppManagerService implements IAppManager {
         NativeLibraryHelperCompat.copyNativeBinaries(new File(path), libDir);
         try {
             // copy libva-native.so so that the symbol MSHookFunction() can be accessed in patch plugin after Android N
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
                 File vaNativeSo = new File(libDir, "libva++.so");
                 if (!vaNativeSo.exists()) {
                     FileUtils.createSymlink(
@@ -215,8 +214,7 @@ public class VAppManagerService implements IAppManager {
                             vaNativeSo.getAbsolutePath());
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -246,6 +244,7 @@ public class VAppManagerService implements IAppManager {
         } else {
             ps = new PackageSetting();
         }
+        ps.pravicy = 0;
         ps.isHook = isHook;
         ps.dependSystem = dependSystem;
         ps.apkPath = packageFile.getPath();
@@ -287,11 +286,10 @@ public class VAppManagerService implements IAppManager {
             }
         }
         BroadcastSystem.get().startApp(pkg);
-        if(isHook) {
-            HookCacheManager.HookCacheInfo info = new HookCacheManager.HookCacheInfo(ps.packageName,(String)(pkg.mAppMetaData.get(HookCacheManager.HOOK_PROCESS)),(String)(pkg.mAppMetaData.get(HookCacheManager.HOOK_INFO)));
-            HookCacheManager.put((String)(pkg.mAppMetaData.get(HookCacheManager.HOOK_PROCESS)),info);
-        }
-        else if (notify) {
+        if (isHook) {
+            HookCacheManager.HookCacheInfo info = new HookCacheManager.HookCacheInfo(ps.packageName, (String) (pkg.mAppMetaData.get(HookCacheManager.HOOK_PROCESS)), (String) (pkg.mAppMetaData.get(HookCacheManager.HOOK_INFO)));
+            HookCacheManager.put((String) (pkg.mAppMetaData.get(HookCacheManager.HOOK_PROCESS)), info);
+        } else if (notify) {
             notifyAppInstalled(ps, -1);
         }
         res.isSuccess = true;
@@ -385,10 +383,9 @@ public class VAppManagerService implements IAppManager {
         String packageName = ps.packageName;
         try {
             BroadcastSystem.get().stopApp(packageName);
-            if(ps.isHook) {
+            if (ps.isHook) {
                 VActivityManagerService.get().killAllApps();
-            }
-            else {
+            } else {
                 VActivityManagerService.get().killAppByPkg(packageName, VUserHandle.USER_ALL);
             }
             VEnvironment.getPackageResourcePath(packageName).delete();
@@ -399,6 +396,7 @@ public class VAppManagerService implements IAppManager {
             }
             PackageCacheManager.remove(packageName);
             HookCacheManager.remove(packageName);
+            HookPravicyManager.remove(packageName);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
