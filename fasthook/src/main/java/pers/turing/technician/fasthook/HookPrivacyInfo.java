@@ -11,11 +11,11 @@ public @interface HookPrivacyInfo {
     static int MODE_HOOK = 1;
     static int MODE_CALLBACK = 2;
 
-    public static int PRAVICY_Camera = 0;
-    public static int PRAVICY_Net = 1;
-    public static int PRAVICY_SMS = 2;
-    public static int PRAVICY_IMEI = 3;
-    public static int PRAVICY_TASK = 4;
+    public static int PRAVICY_Camera = 1;
+    public static int PRAVICY_Net = 2;
+    public static int PRAVICY_SMS = 4;
+    public static int PRAVICY_IMEI = 8;
+    public static int PRAVICY_TASK = 16;
 
     int hook() default MODE_HOOK;
 

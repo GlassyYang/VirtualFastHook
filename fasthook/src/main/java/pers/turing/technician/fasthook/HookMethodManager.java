@@ -23,51 +23,6 @@ import android.hardware.Camera;
 public class HookMethodManager {
     public static String TAG = "HookMethodManager";
 
-    private static Map<String, boolean[]> HOOK_LIST;
-    private static HookMethodManager manager = null;
-
-    // 在Privacy info中定义
-    //    public static int PRAVICY_Camera = 0;     摄像头权限
-    //    public static int PRAVICY_Net = 1;        网络权限
-    //    public static int PRAVICY_SMS = 2;        短信权限
-    //    public static int PRAVICY_IMEI = 3;       手机号、IMEI等
-    //    public static int PRAVICY_TASK = 4;       任务列表
-
-    // 单例模式
-    public static HookMethodManager Instance() {
-        if (manager == null) {
-            manager = new HookMethodManager();
-            HOOK_LIST = new HashMap<>();
-        }
-        return manager;
-    }
-
-    // 注册要hook的包名和要关闭的权限
-    public void register_hook_method(String app, int PARVICY) {
-        if (!HOOK_LIST.containsKey(app)) {
-            boolean[] value = new boolean[5];
-            for (boolean b : value) b = false;
-            HOOK_LIST.put(app, value);
-        }
-        boolean[] array = HOOK_LIST.get(app);
-        assert array != null;
-        array[PARVICY] = true;
-    }
-
-    // 取消注册要hook的包名和要关闭的权限
-    public void unregister_hook_method(String app, int PARVICY) {
-        if (!HOOK_LIST.containsKey(app)) return;
-        boolean[] array = HOOK_LIST.get(app);
-        assert array != null;
-        array[PARVICY] = false;
-    }
-
-    boolean[] get_hook_method(String app) {
-        if (!HOOK_LIST.containsKey(app)) return null;
-        return HOOK_LIST.get(app);
-    }
-
-
     // 摄像头
     @HookPrivacyInfo(beHookedClass = "android.hardware.Camera", beHookedMethod = "takePicture", forwardMethod = "forwardTakePicture", pravicy = HookPrivacyInfo.PRAVICY_Camera)
 

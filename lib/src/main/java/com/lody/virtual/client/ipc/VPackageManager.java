@@ -103,11 +103,27 @@ public class VPackageManager {
         }
     }
 
-    public String[] getInstalledHookPlugins(String process){
+    public String[] getInstalledHookPlugins(String process) {
         try {
             return getService().getInstalledHookPlugins(process);
         } catch (RemoteException e) {
             return VirtualRuntime.crash(e);
+        }
+    }
+
+    public int getHookedPrivacy(String process) {
+        try {
+            return getService().getHookedPrivacy(process);
+        } catch (RemoteException e) {
+            return VirtualRuntime.crash(e);
+        }
+    }
+
+    public void setHookedPrivacy(String process, int privacy) {
+        try {
+            getService().setHookedPrivacy(process, privacy);
+        } catch (RemoteException e) {
+            VirtualRuntime.crash(e);
         }
     }
 

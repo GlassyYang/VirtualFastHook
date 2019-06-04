@@ -76,14 +76,13 @@ public class FastHookManager {
         Logd("Init");
     }
 
-    public static void doHook(String process_name, ClassLoader targetClassLoader, boolean jitInline) {
+    public static void doHook(String process_name, ClassLoader targetClassLoader, int toHook, boolean jitInline) {
         Method[] methods = HookMethodManager.class.getMethods();
 
-        boolean[] toHook = HookMethodManager.Instance().get_hook_method(process_name);
         for (Method method : methods) {
             HookPrivacyInfo info = method.getAnnotation(HookPrivacyInfo.class);
             if (info == null) continue;
-            if (!toHook[info.pravicy()]) continue;
+            if ((toHook & info.pravicy()) == 0) continue;
             try {
                 Class[] params = method.getParameterTypes();
                 Class[] targetParams = Arrays.copyOfRange(method.getParameterTypes(), 1, params.length);

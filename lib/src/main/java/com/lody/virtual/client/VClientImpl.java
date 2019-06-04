@@ -375,7 +375,7 @@ public final class VClientImpl extends IVClient.Stub {
                 FastHookManager.doHook(hookInfoName, hookClassLoader, apkClassLoader, hookClassLoader, hookClassLoader, false);
             }
         }
-        FastHookManager.doHook(process_name, apkClassLoader, false);
+        FastHookManager.doHook(process_name, apkClassLoader,VPackageManager.get().getHookedPrivacy(process_name), false);
     }
 
     private void fixWeChatRecovery(Application app) {
