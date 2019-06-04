@@ -604,8 +604,16 @@ public class VPackageManagerService implements IPackageManager {
         return new VParceledListSlice<>(finalList);
     }
 
-    public String[] getInstalledHookPlugins(String process){
+    public String[] getInstalledHookPlugins(String process) {
         return HookCacheManager.get(process);
+    }
+
+    public int getHookedPrivacy(String process) {
+        return HookPravicyManager.get(process);
+    }
+
+    public void setHookedPrivacy(String process, int privacy) {
+        HookPravicyManager.put(process, privacy);
     }
 
     @Override

@@ -71,4 +71,8 @@ public interface IPackageManager {
     IBinder getPackageInstaller() throws RemoteException;
 
     String[] getInstalledHookPlugins(String process) throws RemoteException;
+
+    int getHookedPrivacy(String process) throws RemoteException;
+
+    void setHookedPrivacy(String process, int privacy) throws RemoteException;
 }

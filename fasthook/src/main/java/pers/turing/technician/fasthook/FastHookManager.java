@@ -7,9 +7,13 @@ import android.util.Log;
 
 import java.lang.reflect.Member;
 import java.lang.StringBuilder;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import static pers.turing.technician.fasthook.HookPrivacyInfo.MODE_CALLBACK;
+import static pers.turing.technician.fasthook.HookPrivacyInfo.MODE_HOOK;
 
 public class FastHookManager {
     private static final String TAG = "FastHookManager";
@@ -59,7 +63,6 @@ public class FastHookManager {
     private static HashMap<Member, HookRecord> mHookMap;
     private static HashMap<Long, ArrayList<HookRecord>> mQuickTrampolineMap;
     private static Handler mHandler;
-    private static long mQuickToInterpreterBridge;
 
     static {
         System.loadLibrary(HOOK_LIB);
@@ -67,7 +70,41 @@ public class FastHookManager {
         mQuickTrampolineMap = new HashMap<Long, ArrayList<HookRecord>>();
         mHandler = new HookHandler();
         init(Build.VERSION.SDK_INT);
+        if (Build.VERSION.SDK_INT >= ANDROID_P) {
+            disableHiddenApiCheck();
+        }
         Logd("Init");
+    }
+
+    public static void doHook(String process_name, ClassLoader targetClassLoader, int toHook, boolean jitInline) {
+        Method[] methods = HookMethodManager.class.getMethods();
+
+        for (Method method : methods) {
+            HookPrivacyInfo info = method.getAnnotation(HookPrivacyInfo.class);
+            if (info == null) continue;
+            if ((toHook & info.pravicy()) == 0) continue;
+            try {
+                Class[] params = method.getParameterTypes();
+                Class[] targetParams = Arrays.copyOfRange(method.getParameterTypes(), 1, params.length);
+
+                Member hookMethod = null;
+                Member forwardMethod = null;
+                Member targetMethod = Class.forName(info.beHookedClass(), true, targetClassLoader).getDeclaredMethod(info.beHookedMethod(), targetParams);
+
+                hookMethod = method;
+                forwardMethod = HookMethodManager.class.getMethod(info.forwardMethod(), params);
+                doHook(targetMethod, hookMethod, forwardMethod, info.mode(), 0);
+
+                Logd("doHook Mode:" + info);
+
+                if (!jitInline && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    disableJITInline();
+                }
+            } catch (Exception e) {
+                Logd("Hook Failed: " + info);
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void doHook(String hookInfoClassName, ClassLoader hookInfoClassLoader, ClassLoader targetClassLoader, ClassLoader hookClassLoader, ClassLoader forwardClassLoader, boolean jitInline) {
@@ -143,6 +180,10 @@ public class FastHookManager {
             Logd("do replace hook for native method");
         }
 
+        if (mode == MODE_REPLACE && Build.VERSION.SDK_INT == ANDROID_L && !isNative) {
+            mode = MODE_REWRITE;
+        }
+
         switch (mode) {
             case MODE_REWRITE:
                 long entryPoint = getMethodEntryPoint(targetMethod);
@@ -178,6 +219,10 @@ public class FastHookManager {
                         if (success) {
                             doFullRewriteHookInternal(targetMethod, hookMethod, forwardMethod);
                         } else {
+                            if (Build.VERSION.SDK_INT == ANDROID_L) {
+                                Loge("hook failed!");
+                                return;
+                            }
                             doReplaceHookInternal(targetMethod, hookMethod, forwardMethod, isNative);
                         }
                     } else {
@@ -212,6 +257,10 @@ public class FastHookManager {
                                 if (success) {
                                     doFullRewriteHookInternal(targetMethod, hookMethod, forwardMethod);
                                 } else {
+                                    if (Build.VERSION.SDK_INT == ANDROID_L) {
+                                        Loge("hook failed!");
+                                        return;
+                                    }
                                     if (Build.VERSION.SDK_INT >= ANDROID_O && BuildConfig.DEBUG) {
                                         setNativeMethod(targetMethod);
                                         Logd("set target method to native on debug mode");
@@ -387,10 +436,6 @@ public class FastHookManager {
                 if (CONSTRUCTOR.equals(methodName)) {
                     method = Class.forName(className, true, targetClassLoader).getDeclaredConstructor(params);
                 } else {
-                    Loge("Method: " + methodName);
-                    for (Class param : params) {
-                        Loge("Param: " + param.getName());
-                    }
                     method = Class.forName(className, true, targetClassLoader).getDeclaredMethod(methodName, params);
                 }
             } else {

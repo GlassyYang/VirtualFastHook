@@ -359,8 +359,8 @@ public final class VClientImpl extends IVClient.Stub {
         VirtualCore.get().getComponentDelegate().afterApplicationCreate(mInitialApplication);
     }
 
-    private void tryHook(String process, ClassLoader apkClassLoader) {
-        String[] infos = VPackageManager.get().getInstalledHookPlugins(process);
+    private void tryHook(String process_name, ClassLoader apkClassLoader) {
+        String[] infos = VPackageManager.get().getInstalledHookPlugins(process_name);
         if (infos != null) {
             for (String info : infos) {
                 int size = info.charAt(0);
@@ -375,9 +375,7 @@ public final class VClientImpl extends IVClient.Stub {
                 FastHookManager.doHook(hookInfoName, hookClassLoader, apkClassLoader, hookClassLoader, hookClassLoader, false);
             }
         }
-
-        String hookInfoName = "io.virtualapp.hook.HookInfo";
-        FastHookManager.doHook(hookInfoName, null, apkClassLoader, null, null, false);
+        FastHookManager.doHook(process_name, apkClassLoader,VPackageManager.get().getHookedPrivacy(process_name), false);
     }
 
     private void fixWeChatRecovery(Application app) {
